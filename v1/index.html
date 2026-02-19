@@ -1070,6 +1070,448 @@
             height: 13px
         }
 
+        /* crop button in properties */
+        .crop-open-btn {
+            width: 100%;
+            padding: 8px;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            background: none;
+            color: var(--mid);
+            font-size: 11px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: .15s
+        }
+
+        .crop-open-btn:hover {
+            border-color: var(--blue);
+            color: var(--blue);
+            background: var(--blue-l)
+        }
+
+        .crop-open-btn svg {
+            width: 13px;
+            height: 13px
+        }
+
+        .crop-reset-btn {
+            flex: 0 0 auto;
+            padding: 7px 10px;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            background: none;
+            color: var(--muted);
+            font-size: 10px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: .15s
+        }
+
+        .crop-reset-btn:hover {
+            border-color: var(--red);
+            color: var(--red)
+        }
+
+        .crop-reset-btn svg {
+            width: 11px;
+            height: 11px
+        }
+
+        .crop-btn-row {
+            display: flex;
+            gap: 6px;
+            align-items: center
+        }
+
+        .crop-btn-row .crop-open-btn {
+            flex: 1
+        }
+
+        /* ── CROP MODAL ── */
+        #cropOv {
+            position: fixed;
+            inset: 0;
+            background: rgba(8, 10, 25, .72);
+            backdrop-filter: blur(14px);
+            z-index: 9600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity .3s, visibility .3s;
+            padding: 16px
+        }
+
+        #cropOv.show {
+            opacity: 1;
+            visibility: visible
+        }
+
+        .crop-modal {
+            background: #fff;
+            border-radius: 22px;
+            width: 100%;
+            max-width: 680px;
+            box-shadow: 0 32px 80px rgba(0, 0, 0, .3);
+            overflow: hidden;
+            transform: translateY(28px) scale(.96);
+            transition: transform .38s cubic-bezier(.34, 1.2, .64, 1)
+        }
+
+        #cropOv.show .crop-modal {
+            transform: translateY(0) scale(1)
+        }
+
+        .crop-m-hdr {
+            padding: 18px 22px 14px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between
+        }
+
+        .crop-m-hdr-l {
+            display: flex;
+            align-items: center;
+            gap: 11px
+        }
+
+        .crop-m-ico {
+            width: 38px;
+            height: 38px;
+            border-radius: 11px;
+            background: var(--blue-l);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--blue)
+        }
+
+        .crop-m-ico svg {
+            width: 18px;
+            height: 18px
+        }
+
+        .crop-m-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--dark)
+        }
+
+        .crop-m-sub {
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 2px
+        }
+
+        .crop-m-x {
+            width: 32px;
+            height: 32px;
+            border-radius: 9px;
+            border: 1.5px solid var(--border);
+            background: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--mid);
+            transition: .15s
+        }
+
+        .crop-m-x:hover {
+            background: #fee2e2;
+            border-color: #fca5a5;
+            color: #ef4444
+        }
+
+        .crop-m-x svg {
+            width: 13px;
+            height: 13px
+        }
+
+        /* aspect ratio pills */
+        .crop-ar-row {
+            display: flex;
+            gap: 6px;
+            padding: 12px 22px;
+            border-bottom: 1px solid var(--border);
+            overflow-x: auto;
+            scrollbar-width: none;
+            flex-wrap: wrap
+        }
+
+        .crop-ar-row::-webkit-scrollbar {
+            display: none
+        }
+
+        .car {
+            padding: 5px 13px;
+            border-radius: 20px;
+            border: 1.5px solid var(--border);
+            background: #fff;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--mid);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: .15s;
+            font-family: inherit
+        }
+
+        .car:hover {
+            border-color: var(--blue);
+            color: var(--blue)
+        }
+
+        .car.on {
+            background: var(--blue);
+            border-color: var(--blue);
+            color: #fff
+        }
+
+        /* canvas area */
+        .crop-canvas-area {
+            padding: 18px 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px
+        }
+
+        .crop-preview-wrap {
+            position: relative;
+            width: 100%;
+            background: #1a1d2e;
+            border-radius: 12px;
+            overflow: hidden;
+            user-select: none;
+            min-height: 220px;
+            display: flex;
+            align-items: center;
+            justify-content: center
+        }
+
+        #cropPreviewImg {
+            display: block;
+            max-width: 100%;
+            max-height: 320px;
+            object-fit: contain;
+            pointer-events: none;
+            border-radius: 8px
+        }
+
+        /* dark overlay outside crop box */
+        .crop-shade {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: rgba(0, 0, 0, .55);
+            z-index: 1
+        }
+
+        /* the crop selection box */
+        #cropBox {
+            position: absolute;
+            border: 2px solid var(--blue);
+            box-shadow: 0 0 0 9999px rgba(0, 0, 0, .52);
+            z-index: 2;
+            cursor: move;
+            border-radius: 2px
+        }
+
+        .crop-corner {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #fff;
+            border: 2px solid var(--blue);
+            border-radius: 3px;
+            z-index: 3;
+            box-shadow: 0 1px 5px rgba(0, 0, 0, .3)
+        }
+
+        .crop-corner.tl {
+            top: -6px;
+            left: -6px;
+            cursor: nw-resize
+        }
+
+        .crop-corner.tr {
+            top: -6px;
+            right: -6px;
+            cursor: ne-resize
+        }
+
+        .crop-corner.bl {
+            bottom: -6px;
+            left: -6px;
+            cursor: sw-resize
+        }
+
+        .crop-corner.br {
+            bottom: -6px;
+            right: -6px;
+            cursor: se-resize
+        }
+
+        .crop-edge {
+            position: absolute;
+            background: rgba(255, 255, 255, .7);
+            border-radius: 4px;
+            z-index: 3
+        }
+
+        .crop-edge.et {
+            top: -2px;
+            left: 30%;
+            right: 30%;
+            height: 4px;
+            cursor: n-resize
+        }
+
+        .crop-edge.eb {
+            bottom: -2px;
+            left: 30%;
+            right: 30%;
+            height: 4px;
+            cursor: s-resize
+        }
+
+        .crop-edge.el {
+            left: -2px;
+            top: 30%;
+            bottom: 30%;
+            width: 4px;
+            cursor: w-resize
+        }
+
+        .crop-edge.er {
+            right: -2px;
+            top: 30%;
+            bottom: 30%;
+            width: 4px;
+            cursor: e-resize
+        }
+
+        /* grid lines inside crop */
+        .crop-grid {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 2;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: 1fr 1fr 1fr
+        }
+
+        .crop-grid-cell {
+            border: 1px solid rgba(255, 255, 255, .18)
+        }
+
+        /* manual inputs */
+        .crop-manual-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px
+        }
+
+        .crop-inp-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px
+        }
+
+        .crop-inp-lbl {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--muted);
+            letter-spacing: .05em;
+            text-transform: uppercase
+        }
+
+        .crop-inp {
+            width: 100%;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 10px;
+            font-size: 12px;
+            font-family: inherit;
+            color: var(--dark);
+            outline: none;
+            transition: .15s;
+            text-align: center
+        }
+
+        .crop-inp:focus {
+            border-color: var(--blue)
+        }
+
+        .crop-inp-hint {
+            font-size: 10px;
+            color: var(--muted)
+        }
+
+        .crop-m-ftr {
+            padding: 12px 22px 18px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end
+        }
+
+        .crop-cancel {
+            padding: 9px 20px;
+            border: 1.5px solid var(--border);
+            border-radius: 9px;
+            background: none;
+            font-size: 13px;
+            font-weight: 600;
+            font-family: inherit;
+            color: var(--mid);
+            cursor: pointer;
+            transition: .15s
+        }
+
+        .crop-cancel:hover {
+            border-color: var(--mid);
+            color: var(--dark)
+        }
+
+        .crop-apply {
+            padding: 9px 24px;
+            background: var(--blue);
+            color: #fff;
+            border: none;
+            border-radius: 9px;
+            font-size: 13px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: .15s
+        }
+
+        .crop-apply:hover {
+            background: #2b5ce6
+        }
+
+        .crop-apply svg {
+            width: 14px;
+            height: 14px
+        }
+
         /* modals */
         .m-ov {
             position: fixed;
@@ -2418,7 +2860,6 @@
                         <line x1="12" y1="15" x2="12" y2="3" />
                     </svg>Download
                 </button>
-                <button class="pub">Publish Changes</button>
             </div>
         </header>
         <div class="mob-bar">
@@ -2600,6 +3041,32 @@
                                 <span class="sl-val" id="valOpacity">100%</span>
                             </div>
                         </div>
+
+                        <!-- Crop -->
+                        <div class="ps">
+                            <div class="ps-lbl">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M6 2v14a2 2 0 0 0 2 2h14" />
+                                    <path d="M18 22V8a2 2 0 0 0-2-2H2" />
+                                </svg>Crop Image
+                            </div>
+                            <div class="crop-btn-row">
+                                <button class="crop-open-btn" id="cropOpenBtn">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M6 2v14a2 2 0 0 0 2 2h14" />
+                                        <path d="M18 22V8a2 2 0 0 0-2-2H2" />
+                                    </svg>
+                                    Crop Image
+                                </button>
+                                <button class="crop-reset-btn" id="cropResetBtn" title="Reset crop">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                                        <path d="M3 3v5h5" />
+                                    </svg>
+                                    Reset
+                                </button>
+                            </div>
+                        </div>
                         <!-- Delete -->
                         <div class="del-zone">
                             <button class="del-btn-full" id="delLayerBtn">
@@ -2619,6 +3086,100 @@
 
     <div class="pov" id="pov"></div>
     <div id="toast"></div>
+
+    <!-- CROP MODAL -->
+    <div id="cropOv">
+        <div class="crop-modal">
+            <div class="crop-m-hdr">
+                <div class="crop-m-hdr-l">
+                    <div class="crop-m-ico">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 2v14a2 2 0 0 0 2 2h14" />
+                            <path d="M18 22V8a2 2 0 0 0-2-2H2" />
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="crop-m-title">Crop Image</div>
+                        <div class="crop-m-sub">Drag the crop box or enter custom dimensions</div>
+                    </div>
+                </div>
+                <button class="crop-m-x" id="cropMX">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
+            </div>
+            <!-- Aspect Ratio Pills -->
+            <div class="crop-ar-row" id="cropArRow">
+                <button class="car on" data-ar="free">✦ Free</button>
+                <button class="car" data-ar="1:1">1:1 Square</button>
+                <button class="car" data-ar="4:3">4:3</button>
+                <button class="car" data-ar="16:9">16:9</button>
+                <button class="car" data-ar="3:2">3:2</button>
+                <button class="car" data-ar="2:3">2:3 Portrait</button>
+                <button class="car" data-ar="9:16">9:16 Story</button>
+                <button class="car" data-ar="3:4">3:4</button>
+            </div>
+            <div class="crop-canvas-area">
+                <!-- Visual crop area -->
+                <div class="crop-preview-wrap" id="cropPreviewWrap">
+                    <img id="cropPreviewImg" src="" alt="Preview">
+                    <div id="cropBox">
+                        <div class="crop-grid">
+                            <div class="crop-grid-cell"></div>
+                            <div class="crop-grid-cell"></div>
+                            <div class="crop-grid-cell"></div>
+                            <div class="crop-grid-cell"></div>
+                            <div class="crop-grid-cell"></div>
+                            <div class="crop-grid-cell"></div>
+                            <div class="crop-grid-cell"></div>
+                            <div class="crop-grid-cell"></div>
+                            <div class="crop-grid-cell"></div>
+                        </div>
+                        <div class="crop-corner tl" data-h="tl"></div>
+                        <div class="crop-corner tr" data-h="tr"></div>
+                        <div class="crop-corner bl" data-h="bl"></div>
+                        <div class="crop-corner br" data-h="br"></div>
+                        <div class="crop-edge et" data-h="t"></div>
+                        <div class="crop-edge eb" data-h="b"></div>
+                        <div class="crop-edge el" data-h="l"></div>
+                        <div class="crop-edge er" data-h="r"></div>
+                    </div>
+                </div>
+                <!-- Manual size inputs -->
+                <div class="crop-manual-row">
+                    <div class="crop-inp-group">
+                        <label class="crop-inp-lbl">Width (px)</label>
+                        <input type="number" class="crop-inp" id="cropWPx" placeholder="Width">
+                    </div>
+                    <div class="crop-inp-group">
+                        <label class="crop-inp-lbl">Height (px)</label>
+                        <input type="number" class="crop-inp" id="cropHPx" placeholder="Height">
+                    </div>
+                </div>
+                <div class="crop-manual-row" style="margin-top: -8px;">
+                    <div class="crop-inp-group">
+                        <label class="crop-inp-lbl">Width (%)</label>
+                        <input type="number" class="crop-inp" id="cropW" min="5" max="100" value="100">
+                    </div>
+                    <div class="crop-inp-group">
+                        <label class="crop-inp-lbl">Height (%)</label>
+                        <input type="number" class="crop-inp" id="cropH" min="5" max="100" value="100">
+                    </div>
+                </div>
+            </div>
+            <div class="crop-m-ftr">
+                <button class="crop-cancel" id="cropCancel">Cancel</button>
+                <button class="crop-apply" id="cropApply">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    Apply Crop
+                </button>
+            </div>
+        </div>
+    </div>
 
     <script>
         const CATS = ['All', 'Business', 'Nature', 'Technology', 'Food', 'Travel', 'Abstract', 'Fashion', 'Architecture'];
@@ -2861,18 +3422,20 @@
                 item.append(crop, hWrap);
                 applyTransform(item, lyr.props);
 
-                item.addEventListener('mousedown', e => {
+                const onStart = e => {
                     if (e.target.classList.contains('rh')) return;
-                    if (e.button !== 0) return;
-                    e.preventDefault();
+                    if (e.type === 'mousedown' && e.button !== 0) return;
+
+                    const isTouch = e.type === 'touchstart';
+                    if (isTouch) e.preventDefault();
+
+                    const clientX = isTouch ? e.touches[0].clientX : e.clientX;
+                    const clientY = isTouch ? e.touches[0].clientY : e.clientY;
 
                     // ── SMART LAYER SELECTION ──
-                    // All .lg-items cover the full grid (inset:0). The selected layer
-                    // has z-index:500 so it intercepts every click. We use image bounds
-                    // (in % coordinates) to figure out which layer the user actually clicked.
                     const gridRect = layerImgGrid.getBoundingClientRect();
-                    const clickPctX = (e.clientX - gridRect.left) / gridRect.width * 100;
-                    const clickPctY = (e.clientY - gridRect.top) / gridRect.height * 100;
+                    const clickPctX = (clientX - gridRect.left) / gridRect.width * 100;
+                    const clickPctY = (clientY - gridRect.top) / gridRect.height * 100;
 
                     function hitsLayer(l) {
                         const p = l.props;
@@ -2880,9 +3443,7 @@
                             clickPctY >= p.offsetY && clickPctY <= p.offsetY + p.height;
                     }
 
-                    // STEP 1 — Does the click land inside THIS layer's own image?
                     if (hitsLayer(lyr)) {
-                        // Yes → select this layer and start drag
                         if (activeUid !== lyr.uid) {
                             activeUid = lyr.uid;
                             layerImgGrid.querySelectorAll('.lg-item').forEach((el, idx) => {
@@ -2900,8 +3461,6 @@
                         return;
                     }
 
-                    // STEP 2 — Click is outside this layer's image. Find another layer
-                    // whose image contains the click point (search highest z first).
                     let targetUid = null;
                     for (let i = layers.length - 1; i >= 0; i--) {
                         const other = layers[i];
@@ -2926,8 +3485,10 @@
                         updateProps();
                         switchTab('Props');
                     }
-                    // If click hit empty canvas space, do nothing (no drag, no change)
-                });
+                };
+
+                item.addEventListener('mousedown', onStart);
+                item.addEventListener('touchstart', onStart, { passive: false });
 
                 // Single click on item also switches to props tab
                 item.addEventListener('click', e => {
@@ -2946,10 +3507,12 @@
         let _raf = null;
 
         function attachMoveDrag(e, lyr, itemEl) {
+            const isTouch = e.type === 'touchstart';
             e.preventDefault();
-            const startX = e.clientX, startY = e.clientY;
+
+            const startX = isTouch ? e.touches[0].clientX : e.clientX;
+            const startY = isTouch ? e.touches[0].clientY : e.clientY;
             const origX = lyr.props.offsetX, origY = lyr.props.offsetY;
-            // Cache parent rect once — getting it on every mousemove is costly
             const parentEl = itemEl.parentElement;
             const rect = parentEl.getBoundingClientRect();
             const p = lyr.props;
@@ -2961,10 +3524,13 @@
 
             function onMove(me) {
                 moved = true;
+                const clientX = isTouch ? me.touches[0].clientX : me.clientX;
+                const clientY = isTouch ? me.touches[0].clientY : me.clientY;
+
                 if (_raf) cancelAnimationFrame(_raf);
                 _raf = requestAnimationFrame(() => {
-                    p.offsetX = origX + (me.clientX - startX) / rect.width * 100;
-                    p.offsetY = origY + (me.clientY - startY) / rect.height * 100;
+                    p.offsetX = origX + (clientX - startX) / rect.width * 100;
+                    p.offsetY = origY + (clientY - startY) / rect.height * 100;
                     applyTransform(itemEl, p);
                 });
             }
@@ -2972,32 +3538,43 @@
                 if (_raf) cancelAnimationFrame(_raf);
                 document.removeEventListener('mousemove', onMove);
                 document.removeEventListener('mouseup', onUp);
+                document.removeEventListener('touchmove', onMove);
+                document.removeEventListener('touchend', onUp);
                 itemEl.classList.remove('dragging');
                 document.body.style.userSelect = '';
                 document.body.style.cursor = '';
-                if (moved) {
-                    // Only sync sidebar after drag ends, not during
-                    renderLayerList();
-                }
+                if (moved) renderLayerList();
             }
-            document.addEventListener('mousemove', onMove, { passive: true });
-            document.addEventListener('mouseup', onUp);
+            if (isTouch) {
+                document.addEventListener('touchmove', onMove, { passive: false });
+                document.addEventListener('touchend', onUp);
+            } else {
+                document.addEventListener('mousemove', onMove, { passive: true });
+                document.addEventListener('mouseup', onUp);
+            }
         }
 
         function attachResizeDrag(handle, lyr, itemEl) {
-            handle.addEventListener('mousedown', e => {
-                e.stopPropagation(); e.preventDefault();
+            const onStart = e => {
+                const isTouch = e.type === 'touchstart';
+                e.preventDefault(); // Stop scroll and dual firing
+                e.stopPropagation();
+
                 const pos = handle.dataset.pos;
-                const startX = e.clientX, startY = e.clientY;
+                const startX = isTouch ? e.touches[0].clientX : e.clientX;
+                const startY = isTouch ? e.touches[0].clientY : e.clientY;
                 const p = lyr.props;
                 const origW = p.width, origH = p.height, origX = p.offsetX, origY = p.offsetY;
                 const rect = itemEl.parentElement.getBoundingClientRect();
 
                 function onMove(me) {
+                    const clientX = isTouch ? me.touches[0].clientX : me.clientX;
+                    const clientY = isTouch ? me.touches[0].clientY : me.clientY;
+
                     if (_raf) cancelAnimationFrame(_raf);
                     _raf = requestAnimationFrame(() => {
-                        let dx = (me.clientX - startX) / rect.width * 100;
-                        let dy = (me.clientY - startY) / rect.height * 100;
+                        let dx = (clientX - startX) / rect.width * 100;
+                        let dy = (clientY - startY) / rect.height * 100;
 
                         if (pos.includes('l')) { p.width = Math.max(5, origW - dx); p.offsetX = origX + dx; }
                         if (pos.includes('r')) { p.width = Math.max(5, origW + dx); }
@@ -3016,11 +3593,20 @@
                     cancelAnimationFrame(_raf);
                     document.removeEventListener('mousemove', onMove);
                     document.removeEventListener('mouseup', onUp);
+                    document.removeEventListener('touchmove', onMove);
+                    document.removeEventListener('touchend', onUp);
                     renderLayerList();
                 }
-                document.addEventListener('mousemove', onMove);
-                document.addEventListener('mouseup', onUp);
-            });
+                if (isTouch) {
+                    document.addEventListener('touchmove', onMove, { passive: false });
+                    document.addEventListener('touchend', onUp);
+                } else {
+                    document.addEventListener('mousemove', onMove);
+                    document.addEventListener('mouseup', onUp);
+                }
+            };
+            handle.addEventListener('mousedown', onStart);
+            handle.addEventListener('touchstart', onStart, { passive: false });
         }
 
         // sliders
@@ -3229,6 +3815,258 @@
         }
 
         setTimeout(() => { document.getElementById('loader').classList.add('gone'); setTimeout(openSize, 450); }, 2200);
+
+        // ── CROP MODAL ──
+        const cropOv = document.getElementById('cropOv');
+        const cropBox = document.getElementById('cropBox');
+        const cropPreviewImg = document.getElementById('cropPreviewImg');
+        const cropPreviewWrap = document.getElementById('cropPreviewWrap');
+        const cropWInput = document.getElementById('cropW');
+        const cropHInput = document.getElementById('cropH');
+        const cropWPxInput = document.getElementById('cropWPx');
+        const cropHPxInput = document.getElementById('cropHPx');
+
+        // Crop state (all in % relative to the displayed preview area)
+        let _cropAR = 'free'; // aspect ratio mode
+        // cropRect: x,y,w,h in pixels relative to preview wrap
+        let _cropRect = { x: 0, y: 0, w: 100, h: 100 };
+        // naturalRect: position and size of image inside wrap (accounting for object-fit:contain)
+        let _imgNatRect = { x: 0, y: 0, w: 0, h: 0 };
+
+        function getImgNatRect() {
+            const img = cropPreviewImg;
+            const wrap = cropPreviewWrap;
+            const wW = wrap.clientWidth; const wH = wrap.clientHeight;
+            const iW = img.naturalWidth || img.width || wW;
+            const iH = img.naturalHeight || img.height || wH;
+            const scale = Math.min(wW / iW, wH / iH);
+            const dW = iW * scale; const dH = iH * scale;
+            const x = (wW - dW) / 2; const y = (wH - dH) / 2;
+            return { x, y, w: dW, h: dH };
+        }
+
+        function clampCropRect(r) {
+            const nr = _imgNatRect;
+            r.x = Math.max(nr.x, Math.min(r.x, nr.x + nr.w - r.w));
+            r.y = Math.max(nr.y, Math.min(r.y, nr.y + nr.h - r.h));
+            r.w = Math.max(nr.w * 0.05, Math.min(r.w, nr.w));
+            r.h = Math.max(nr.h * 0.05, Math.min(r.h, nr.h));
+            r.x = Math.max(nr.x, Math.min(r.x, nr.x + nr.w - r.w));
+            r.y = Math.max(nr.y, Math.min(r.y, nr.y + nr.h - r.h));
+            return r;
+        }
+
+        function applyARtoCrop() {
+            if (_cropAR === 'free') return;
+            const [aN, aD] = _cropAR.split(':').map(Number);
+            const ratio = aN / aD;
+            const nr = _imgNatRect;
+            let w = _cropRect.w, h = _cropRect.h;
+            // fix width, adjust height
+            h = w / ratio;
+            if (h > nr.h) { h = nr.h; w = h * ratio; }
+            if (w > nr.w) { w = nr.w; h = w / ratio; }
+            _cropRect.w = w; _cropRect.h = h;
+            clampCropRect(_cropRect);
+        }
+
+        function renderCropBox() {
+            const r = _cropRect;
+            cropBox.style.left = r.x + 'px';
+            cropBox.style.top = r.y + 'px';
+            cropBox.style.width = r.w + 'px';
+            cropBox.style.height = r.h + 'px';
+            // update manual inputs
+            const nr = _imgNatRect;
+            const img = cropPreviewImg;
+            cropWInput.value = Math.round(r.w / nr.w * 100);
+            cropHInput.value = Math.round(r.h / nr.h * 100);
+            if (img.naturalWidth) {
+                cropWPxInput.value = Math.round((r.w / nr.w) * img.naturalWidth);
+                cropHPxInput.value = Math.round((r.h / nr.h) * img.naturalHeight);
+            }
+        }
+
+        function initCropBox() {
+            _imgNatRect = getImgNatRect();
+            const nr = _imgNatRect;
+            _cropRect = { x: nr.x, y: nr.y, w: nr.w, h: nr.h };
+            applyARtoCrop();
+            renderCropBox();
+        }
+
+        function openCropModal() {
+            const lyr = getActive();
+            if (!lyr) { toast('Select a layer first'); return; }
+            cropPreviewImg.src = lyr.img;
+            _cropAR = 'free';
+            document.querySelectorAll('.car').forEach(c => c.classList.toggle('on', c.dataset.ar === 'free'));
+            cropPreviewImg.onload = () => { initCropBox(); };
+            if (cropPreviewImg.complete && cropPreviewImg.naturalWidth > 0) initCropBox();
+            cropOv.classList.add('show');
+        }
+        function closeCropModal() { cropOv.classList.remove('show'); }
+
+        document.getElementById('cropOpenBtn').addEventListener('click', openCropModal);
+        document.getElementById('cropMX').addEventListener('click', closeCropModal);
+        document.getElementById('cropCancel').addEventListener('click', closeCropModal);
+        cropOv.addEventListener('click', e => { if (e.target === cropOv) closeCropModal(); });
+
+        // Aspect ratio pills
+        document.querySelectorAll('.car').forEach(btn => {
+            btn.addEventListener('click', function () {
+                document.querySelectorAll('.car').forEach(c => c.classList.remove('on'));
+                this.classList.add('on');
+                _cropAR = this.dataset.ar;
+                applyARtoCrop();
+                renderCropBox();
+            });
+        });
+
+        // Manual input sync
+        function manualInputSync(e) {
+            const nr = _imgNatRect;
+            const img = cropPreviewImg;
+            if (!nr.w || !img.naturalWidth) return;
+
+            if (e.target.id === 'cropWPx' || e.target.id === 'cropHPx') {
+                let wPx = parseFloat(cropWPxInput.value) || img.naturalWidth;
+                let hPx = parseFloat(cropHPxInput.value) || img.naturalHeight;
+                _cropRect.w = (wPx / img.naturalWidth) * nr.w;
+                _cropRect.h = (hPx / img.naturalHeight) * nr.h;
+            } else {
+                let wPct = Math.min(100, Math.max(5, parseFloat(cropWInput.value) || 100));
+                let hPct = Math.min(100, Math.max(5, parseFloat(cropHInput.value) || 100));
+                _cropRect.w = nr.w * wPct / 100;
+                _cropRect.h = nr.h * hPct / 100;
+            }
+
+            _cropRect.x = nr.x + (nr.w - _cropRect.w) / 2;
+            _cropRect.y = nr.y + (nr.h - _cropRect.h) / 2;
+            if (_cropAR !== 'free') applyARtoCrop();
+            clampCropRect(_cropRect);
+            renderCropBox();
+        }
+        cropWInput.addEventListener('input', manualInputSync);
+        cropHInput.addEventListener('input', manualInputSync);
+        cropWPxInput.addEventListener('input', manualInputSync);
+        cropHPxInput.addEventListener('input', manualInputSync);
+
+        // Drag crop box & handles
+        (function () {
+            let dragging = false, resizeMode = null;
+            let startX, startY, startRect;
+
+            function onCropMouseMove(e) {
+                if (!dragging) return;
+                const isTouch = e.type.startsWith('touch');
+                const clientX = isTouch ? e.touches[0].clientX : e.clientX;
+                const clientY = isTouch ? e.touches[0].clientY : e.clientY;
+
+                const nr = _imgNatRect;
+                const dx = clientX - startX;
+                const dy = clientY - startY;
+                const r = { ...startRect };
+
+                if (resizeMode === 'move') {
+                    r.x = startRect.x + dx; r.y = startRect.y + dy;
+                } else {
+                    if (resizeMode.includes('r')) { r.w = Math.max(nr.w * 0.05, startRect.w + dx); }
+                    if (resizeMode.includes('l')) { r.w = Math.max(nr.w * 0.05, startRect.w - dx); r.x = startRect.x + (startRect.w - r.w); }
+                    if (resizeMode.includes('b')) { r.h = Math.max(nr.h * 0.05, startRect.h + dy); }
+                    if (resizeMode.includes('t')) { r.h = Math.max(nr.h * 0.05, startRect.h - dy); r.y = startRect.y + (startRect.h - r.h); }
+                    if (_cropAR !== 'free') {
+                        const [aN, aD] = _cropAR.split(':').map(Number);
+                        const ratio = aN / aD;
+                        if (resizeMode.includes('r') || resizeMode.includes('l')) r.h = r.w / ratio;
+                        else r.w = r.h * ratio;
+                        if (r.w > nr.w) { r.w = nr.w; r.h = r.w / ratio; }
+                        if (r.h > nr.h) { r.h = nr.h; r.w = r.h * ratio; }
+                    }
+                }
+                _cropRect = clampCropRect(r);
+                renderCropBox();
+            }
+
+            function onCropMouseUp() {
+                dragging = false;
+                document.removeEventListener('mousemove', onCropMouseMove);
+                document.removeEventListener('mouseup', onCropMouseUp);
+                document.removeEventListener('touchmove', onCropMouseMove);
+                document.removeEventListener('touchend', onCropMouseUp);
+            }
+
+            function startDrag(e, mode) {
+                const isTouch = e.type === 'touchstart';
+                if (!isTouch) e.preventDefault();
+                e.stopPropagation();
+
+                dragging = true; resizeMode = mode;
+                startX = isTouch ? e.touches[0].clientX : e.clientX;
+                startY = isTouch ? e.touches[0].clientY : e.clientY;
+                startRect = { ..._cropRect };
+
+                if (isTouch) {
+                    document.addEventListener('touchmove', onCropMouseMove, { passive: false });
+                    document.addEventListener('touchend', onCropMouseUp);
+                } else {
+                    document.addEventListener('mousemove', onCropMouseMove);
+                    document.addEventListener('mouseup', onCropMouseUp);
+                }
+            }
+
+            const onCropBoxStart = e => {
+                if (e.target !== cropBox && !e.target.classList.contains('crop-grid') && !e.target.classList.contains('crop-grid-cell')) return;
+                startDrag(e, 'move');
+            };
+            cropBox.addEventListener('mousedown', onCropBoxStart);
+            cropBox.addEventListener('touchstart', onCropBoxStart, { passive: false });
+
+            document.querySelectorAll('.crop-corner, .crop-edge').forEach(el => {
+                const onHandleStart = e => startDrag(e, el.dataset.h);
+                el.addEventListener('mousedown', onHandleStart);
+                el.addEventListener('touchstart', onHandleStart, { passive: false });
+            });
+        })();
+
+        // Apply Crop
+        document.getElementById('cropApply').addEventListener('click', () => {
+            const lyr = getActive(); if (!lyr) return;
+            const nr = _imgNatRect;
+            if (!nr.w || !nr.h) { closeCropModal(); return; }
+            // Calculate crop as % of image area
+            const cropXPct = (_cropRect.x - nr.x) / nr.w * 100;
+            const cropYPct = (_cropRect.y - nr.y) / nr.h * 100;
+            const cropWPct = _cropRect.w / nr.w * 100;
+            const cropHPct = _cropRect.h / nr.h * 100;
+            // Apply to layer props: adjusting offsetX/Y and width/height
+            // We store crop as cropX/Y/W/H in % of the *original image*
+            // The layer's img is cropped by adjusting the displayed area
+            const p = lyr.props;
+            // Scale offset within the current layer region
+            const origW = p.width, origH = p.height;
+            p.offsetX = p.offsetX + (origW * cropXPct / 100);
+            p.offsetY = p.offsetY + (origH * cropYPct / 100);
+            p.width = origW * cropWPct / 100;
+            p.height = origH * cropHPct / 100;
+            // Store crop on image transform: shift the img inside .lg-crop
+            lyr._cropX = cropXPct;
+            lyr._cropY = cropYPct;
+            lyr._cropW = cropWPct;
+            lyr._cropH = cropHPct;
+            refreshGrid(); renderLayerList(); updateProps();
+            closeCropModal();
+            toast('Crop applied ✂️');
+        });
+
+        // Reset crop
+        document.getElementById('cropResetBtn').addEventListener('click', () => {
+            const lyr = getActive(); if (!lyr) return;
+            lyr.props = { ...lyr.props, offsetX: 0, offsetY: 0, width: 100, height: 100 };
+            lyr._cropX = lyr._cropY = lyr._cropW = lyr._cropH = undefined;
+            refreshGrid(); renderLayerList(); updateProps();
+            toast('Crop reset');
+        });
     </script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
