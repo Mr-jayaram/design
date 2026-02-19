@@ -381,78 +381,20 @@
 
         .c-layer {
             background: #fff;
-            border: 1.5px solid #c8d0ea;
+            border: none;
             border-radius: 4px;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 2px 6px rgba(59, 110, 248, .07), 0 8px 32px rgba(0, 0, 0, .1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, .1);
             flex-shrink: 0
         }
 
-        .c-layer::before,
-        .c-layer::after {
-            content: '';
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            border-radius: 2px;
-            background: var(--blue);
-            z-index: 10
-        }
-
-        .c-layer::before {
-            top: -4px;
-            left: -4px
-        }
-
-        .c-layer::after {
-            bottom: -4px;
-            right: -4px
-        }
-
         .lc {
-            position: absolute;
-            width: 12px;
-            height: 12px;
-            border-radius: 3px;
-            background: var(--blue);
-            z-index: 20;
-            border: 2px solid #fff;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2)
-        }
-
-        .lc.tl {
-            top: -6px;
-            left: -6px;
-            cursor: nw-resize;
-        }
-
-        .lc.tr {
-            top: -6px;
-            right: -6px;
-            cursor: ne-resize;
-        }
-
-        .lc.bl {
-            bottom: -6px;
-            left: -6px;
-            cursor: sw-resize;
-        }
-
-        .lc.br {
-            bottom: -6px;
-            right: -6px;
-            cursor: se-resize;
+            display: none;
         }
 
         .l-sel {
-            position: absolute;
-            inset: -1px;
-            border: 1.5px solid var(--blue);
-            border-radius: 4px;
-            pointer-events: none;
-            opacity: .5;
-            z-index: 9
+            display: none;
         }
 
         .layer-img-grid {
@@ -490,8 +432,8 @@
         .lg-crop {
             position: absolute;
             inset: 0;
-            overflow: visible;
-            /* Don't clip internal images, show all canva area */
+            overflow: hidden;
+            /* Clip images to the layer boundary */
         }
 
         .lg-item img {
@@ -509,40 +451,11 @@
         }
 
         .lg-item .lg-num {
-            position: absolute;
-            top: 6px;
-            left: 6px;
-            background: rgba(0, 0, 0, .55);
-            color: #fff;
-            font-size: 9px;
-            font-weight: 700;
-            padding: 2px 6px;
-            border-radius: 4px;
-            z-index: 6;
-            pointer-events: none
+            display: none;
         }
 
         .lg-item .lg-lbl {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 18px 8px 6px;
-            background: linear-gradient(transparent, rgba(0, 0, 0, .55));
-            font-size: 10px;
-            font-weight: 600;
-            color: rgba(255, 255, 255, .9);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            opacity: 0;
-            transition: .15s;
-            z-index: 6;
-            pointer-events: none
-        }
-
-        .lg-item:hover .lg-lbl {
-            opacity: 1
+            display: none;
         }
 
         /* selection border */
@@ -2497,6 +2410,14 @@
                         <path
                             d="M19.07 4.93l-1.41 1.41M4.93 19.07l-1.41 1.41M19.07 19.07l-1.41-1.41M4.93 4.93l1.41 1.41M21 12h-2M5 12H3M12 21v-2M12 5V3" />
                     </svg></button>
+                <button class="pub" id="dlBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        style="width:14px;height:14px;vertical-align:middle;margin-right:5px">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="7 10 12 15 17 10" />
+                        <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>Download
+                </button>
                 <button class="pub">Publish Changes</button>
             </div>
         </header>
@@ -2532,10 +2453,6 @@
                 </div>
                 <div class="layer-wrap" id="layerWrap">
                     <div class="c-layer" id="cLayer">
-                        <div class="lc tl" data-pos="tl"></div>
-                        <div class="lc tr" data-pos="tr"></div>
-                        <div class="lc bl" data-pos="bl"></div>
-                        <div class="lc br" data-pos="br"></div>
                         <div class="layer-img-grid" id="layerImgGrid"></div>
                         <div class="layer-placeholder" id="layerPlaceholder">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -2939,13 +2856,9 @@
 
                 const num = document.createElement('div');
                 num.className = 'lg-num';
-                num.textContent = 'L' + (layers.indexOf(lyr) + 1);
+                // label hidden via CSS
 
-                const lbl = document.createElement('div');
-                lbl.className = 'lg-lbl';
-                lbl.textContent = lyr.name;
-
-                item.append(crop, hWrap, num, lbl);
+                item.append(crop, hWrap);
                 applyTransform(item, lyr.props);
 
                 item.addEventListener('mousedown', e => {
@@ -2953,26 +2866,67 @@
                     if (e.button !== 0) return;
                     e.preventDefault();
 
-                    // Activate layer WITHOUT calling selectLayer() —
-                    // selectLayer() triggers refreshGrid() which destroys the DOM
-                    // element mid-drag. Instead update state directly.
-                    if (activeUid !== lyr.uid) {
-                        activeUid = lyr.uid;
-                        // Visually update selected state without rebuilding DOM
+                    // ── SMART LAYER SELECTION ──
+                    // All .lg-items cover the full grid (inset:0). The selected layer
+                    // has z-index:500 so it intercepts every click. We use image bounds
+                    // (in % coordinates) to figure out which layer the user actually clicked.
+                    const gridRect = layerImgGrid.getBoundingClientRect();
+                    const clickPctX = (e.clientX - gridRect.left) / gridRect.width * 100;
+                    const clickPctY = (e.clientY - gridRect.top) / gridRect.height * 100;
+
+                    function hitsLayer(l) {
+                        const p = l.props;
+                        return clickPctX >= p.offsetX && clickPctX <= p.offsetX + p.width &&
+                            clickPctY >= p.offsetY && clickPctY <= p.offsetY + p.height;
+                    }
+
+                    // STEP 1 — Does the click land inside THIS layer's own image?
+                    if (hitsLayer(lyr)) {
+                        // Yes → select this layer and start drag
+                        if (activeUid !== lyr.uid) {
+                            activeUid = lyr.uid;
+                            layerImgGrid.querySelectorAll('.lg-item').forEach((el, idx) => {
+                                const sel = el.dataset.uid == lyr.uid;
+                                el.classList.toggle('selected', sel);
+                                el.style.zIndex = sel ? 500 : (idx + 1);
+                            });
+                            lvList.querySelectorAll('.lv-item').forEach(el => {
+                                el.classList.toggle('active', el.dataset && +el.dataset.uid === lyr.uid);
+                            });
+                            updateProps();
+                            switchTab('Props');
+                        }
+                        attachMoveDrag(e, lyr, item);
+                        return;
+                    }
+
+                    // STEP 2 — Click is outside this layer's image. Find another layer
+                    // whose image contains the click point (search highest z first).
+                    let targetUid = null;
+                    for (let i = layers.length - 1; i >= 0; i--) {
+                        const other = layers[i];
+                        if (other.uid === lyr.uid) continue;
+                        if (!other.props.visible) continue;
+                        if (hitsLayer(other)) {
+                            targetUid = other.uid;
+                            break;
+                        }
+                    }
+
+                    if (targetUid !== null) {
+                        activeUid = targetUid;
                         layerImgGrid.querySelectorAll('.lg-item').forEach((el, idx) => {
-                            const isNowSelected = el.dataset.uid == lyr.uid;
-                            el.classList.toggle('selected', isNowSelected);
-                            // Boost selected layer to front; restore others to their stack order
-                            el.style.zIndex = isNowSelected ? 500 : (idx + 1);
+                            const sel = +el.dataset.uid === targetUid;
+                            el.classList.toggle('selected', sel);
+                            el.style.zIndex = sel ? 500 : (idx + 1);
                         });
                         lvList.querySelectorAll('.lv-item').forEach(el => {
-                            el.classList.toggle('active', el.dataset && +el.dataset.uid === lyr.uid);
+                            el.classList.toggle('active', el.dataset && +el.dataset.uid === targetUid);
                         });
                         updateProps();
                         switchTab('Props');
                     }
-
-                    attachMoveDrag(e, lyr, item);
+                    // If click hit empty canvas space, do nothing (no drag, no change)
                 });
 
                 // Single click on item also switches to props tab
@@ -2981,15 +2935,7 @@
                     switchTab('Props');
                 });
 
-                // Double click to reset transform
-                item.addEventListener('dblclick', () => {
-                    lyr.props.offsetX = 25; lyr.props.offsetY = 25;
-                    lyr.props.width = 50; lyr.props.height = 50;
-                    lyr.props.rotate = 0; lyr.props.scaleX = 1; lyr.props.scaleY = 1;
-                    applyTransform(item, lyr.props);
-                    updateProps();
-                    toast('Reset image transform');
-                });
+
 
                 rhEls.forEach(rh => attachResizeDrag(rh, lyr, item));
                 layerImgGrid.appendChild(item);
@@ -3262,34 +3208,7 @@
             cEmpty.style.display = 'none';
         }
 
-        // Attach resize to the 4 corners of the layer (Once)
-        document.querySelectorAll('#cLayer .lc').forEach(lc => {
-            lc.addEventListener('mousedown', e => {
-                e.stopPropagation(); e.preventDefault();
-                const layer = document.getElementById('cLayer');
-                const pos = lc.dataset.pos;
-                const startX = e.clientX, startY = e.clientY;
-                const startLW = layer.offsetWidth, startLH = layer.offsetHeight;
-
-                function onLayerMove(me) {
-                    let dx = me.clientX - startX, dy = me.clientY - startY;
-                    let nlw = startLW, nlh = startLH;
-                    if (pos.includes('r')) nlw = startLW + dx;
-                    if (pos.includes('l')) nlw = startLW - dx;
-                    if (pos.includes('b')) nlh = startLH + dy;
-                    if (pos.includes('t')) nlh = startLH - dy;
-                    nlw = Math.max(120, nlw); nlh = Math.max(80, nlh);
-                    layer.style.width = nlw + 'px';
-                    layer.style.height = nlh + 'px';
-                }
-                function onLayerUp() {
-                    document.removeEventListener('mousemove', onLayerMove);
-                    document.removeEventListener('mouseup', onLayerUp);
-                }
-                document.addEventListener('mousemove', onLayerMove);
-                document.addEventListener('mouseup', onLayerUp);
-            });
-        });
+        // Corner resize handles removed
         document.getElementById('sbSize').addEventListener('click', () => { activeSb('sbSize'); openSize(); });
         document.getElementById('mSbSize').addEventListener('click', () => { activeMi('mSbSize'); openSize(); });
 
@@ -3310,6 +3229,38 @@
         }
 
         setTimeout(() => { document.getElementById('loader').classList.add('gone'); setTimeout(openSize, 450); }, 2200);
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        // ── DOWNLOAD ──
+        document.getElementById('dlBtn').addEventListener('click', () => {
+            const cLayer = document.getElementById('cLayer');
+            if (!cLayer || !document.getElementById('layerWrap').classList.contains('vis')) {
+                toast('Nothing to download yet');
+                return;
+            }
+            toast('Preparing download\u2026');
+            const selItems = document.querySelectorAll('.lg-item.selected');
+            selItems.forEach(el => el.classList.remove('selected'));
+            html2canvas(cLayer, {
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: '#ffffff',
+                scale: 2,
+                logging: false
+            }).then(canvas => {
+                selItems.forEach(el => el.classList.add('selected'));
+                const link = document.createElement('a');
+                link.download = 'design-' + Date.now() + '.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                toast('Downloaded!');
+            }).catch(() => {
+                selItems.forEach(el => el.classList.add('selected'));
+                toast('Download failed. Try again.');
+            });
+        });
     </script>
 </body>
 
