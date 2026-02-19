@@ -1,1845 +1,937 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Theme Customizer</title>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Gilroy:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap"
-        rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --bg: #f0f2f7;
-            --white: #ffffff;
-            --blue: #3b6ef8;
-            --blue-light: #eef1ff;
-            --text-dark: #1a1d2e;
-            --text-mid: #6b7080;
-            --text-light: #a0a5b8;
-            --border: #e8ebf5;
-            --sidebar-w: 60px;
-            --right-w: 320px;
-        }
-
-        body {
-            font-family: 'DM Sans', sans-serif;
-            background: var(--bg);
-            height: 100vh;
-            display: flex;
-            overflow: hidden;
-            color: var(--text-dark);
-        }
-
-        /* ─── LEFT SIDEBAR ─── */
-        .sidebar {
-            width: var(--sidebar-w);
-            background: var(--white);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 14px 0;
-            gap: 4px;
-            border-right: 1px solid var(--border);
-            z-index: 10;
-            flex-shrink: 0;
-        }
-
-        .sidebar-logo {
-            width: 36px;
-            height: 36px;
-            background: var(--blue);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 14px;
-        }
-
-        .sidebar-logo svg {
-            width: 18px;
-            height: 18px;
-            fill: white;
-        }
-
-        .sidebar-icon {
-            width: 38px;
-            height: 38px;
-            border-radius: 9px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: var(--text-light);
-            transition: background 0.15s, color 0.15s;
-            position: relative;
-        }
-
-        .sidebar-icon:hover {
-            background: var(--blue-light);
-            color: var(--blue);
-        }
-
-        .sidebar-icon.active {
-            background: var(--blue-light);
-            color: var(--blue);
-        }
-
-        .sidebar-icon svg {
-            width: 17px;
-            height: 17px;
-        }
-
-        .sidebar-divider {
-            width: 30px;
-            height: 1px;
-            background: var(--border);
-            margin: 8px 0;
-        }
-
-        .sidebar-avatar {
-            margin-top: auto;
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #f97316, #ec4899);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-            font-weight: 600;
-            color: white;
-            cursor: pointer;
-        }
-
-        .sidebar-bottom {
-            margin-top: auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-        }
-
-        /* ─── MAIN AREA ─── */
-        .main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        /* ─── TOP NAV ─── */
-        .topnav {
-            height: 52px;
-            background: var(--white);
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-            flex-shrink: 0;
-        }
-
-        .breadcrumb {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 13px;
-            color: var(--text-mid);
-        }
-
-        .breadcrumb a {
-            color: var(--text-mid);
-            text-decoration: none;
-        }
-
-        .breadcrumb a:hover {
-            color: var(--blue);
-        }
-
-        .breadcrumb .sep {
-            color: var(--text-light);
-        }
-
-        .breadcrumb .current {
-            color: var(--text-dark);
-            font-weight: 500;
-        }
-
-        .breadcrumb .home-icon {
-            width: 15px;
-            height: 15px;
-            color: var(--text-mid);
-        }
-
-        .topnav-right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .icon-btn {
-            width: 34px;
-            height: 34px;
-            border-radius: 8px;
-            border: 1.5px solid var(--border);
-            background: var(--white);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: var(--text-mid);
-            transition: border-color 0.15s, color 0.15s;
-        }
-
-        .icon-btn:hover {
-            border-color: var(--blue);
-            color: var(--blue);
-        }
-
-        .icon-btn svg {
-            width: 15px;
-            height: 15px;
-        }
-
-        .publish-btn {
-            background: var(--blue);
-            color: white;
-            border: none;
-            border-radius: 9px;
-            padding: 9px 18px;
-            font-size: 13px;
-            font-weight: 600;
-            font-family: 'DM Sans', sans-serif;
-            cursor: pointer;
-            transition: background 0.15s, transform 0.1s;
-        }
-
-        .publish-btn:hover {
-            background: #2b5ce6;
-            transform: translateY(-1px);
-        }
-
-        .publish-btn:active {
-            transform: translateY(0);
-        }
-
-        /* ─── CONTENT ─── */
-        .content {
-            flex: 1;
-            display: flex;
-            overflow: hidden;
-        }
-
-        /* ─── CENTER CANVAS ─── */
-        .canvas-area {
-            flex: 1;
-            padding: 28px 30px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 0;
-        }
-
-        .preview-card {
-            background: var(--white);
-            border-radius: 18px;
-            overflow: hidden;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
-            width: 100%;
-            max-width: 580px;
-            margin: 0 auto;
-        }
-
-        /* Hero image area */
-        .preview-hero {
-            height: 180px;
-            background: linear-gradient(135deg, #ffb199 0%, #ffd3c4 30%, #e8c4f0 60%, #c4d4f8 100%);
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .preview-hero::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(ellipse at 70% 30%, rgba(255, 150, 120, 0.6) 0%, transparent 60%),
-                radial-gradient(ellipse at 20% 80%, rgba(180, 200, 255, 0.5) 0%, transparent 50%);
-        }
-
-        .upload-icon {
-            width: 40px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.35);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(4px);
-            z-index: 1;
-        }
-
-        .upload-icon svg {
-            width: 18px;
-            height: 18px;
-            color: white;
-        }
-
-        .drag-label {
-            position: absolute;
-            bottom: 12px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 11px;
-            color: rgba(255, 255, 255, 0.8);
-            font-weight: 500;
-            white-space: nowrap;
-            z-index: 1;
-        }
-
-        /* Preview text content */
-        .preview-body {
-            padding: 24px 28px 0;
-            text-align: center;
-        }
-
-        .h1-text {
-            display: inline-block;
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--blue);
-            border: 2px solid var(--blue);
-            border-radius: 6px;
-            padding: 4px 12px;
-            font-family: 'DM Sans', sans-serif;
-            margin-bottom: 14px;
-        }
-
-        .h2-text {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--text-dark);
-            margin-bottom: 10px;
-        }
-
-        .h3-text {
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--text-mid);
-            margin-bottom: 12px;
-        }
-
-        .body-text {
-            font-size: 11.5px;
-            color: var(--text-light);
-            line-height: 1.7;
-            max-width: 340px;
-            margin: 0 auto;
-        }
-
-        .preview-footer {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 18px 28px;
-            margin-top: 16px;
-            border-top: 1px solid var(--border);
-        }
-
-        .prev-btn {
-            font-size: 13px;
-            color: var(--text-mid);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            background: none;
-            border: none;
-            font-family: 'DM Sans', sans-serif;
-        }
-
-        .prev-btn svg {
-            width: 14px;
-            height: 14px;
-        }
-
-        .done-btn {
-            background: var(--blue);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 8px 18px;
-            font-size: 13px;
-            font-weight: 600;
-            font-family: 'DM Sans', sans-serif;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .done-btn svg {
-            width: 14px;
-            height: 14px;
-        }
-
-        /* Progress dots */
-        .progress-bar {
-            height: 3px;
-            background: var(--border);
-            width: 100%;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            width: 60%;
-            background: var(--blue);
-            border-radius: 0 3px 3px 0;
-        }
-
-        /* ─── RIGHT PANEL ─── */
-        .right-panel {
-            width: var(--right-w);
-            background: var(--white);
-            border-left: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-            flex-shrink: 0;
-        }
-
-        .panel-header {
-            padding: 16px 18px 12px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .panel-title {
-            font-size: 14px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            color: var(--text-dark);
-        }
-
-        .panel-title svg {
-            width: 14px;
-            height: 14px;
-            color: var(--text-mid);
-        }
-
-        /* Alignment tools */
-        .align-tools {
-            display: flex;
-            gap: 4px;
-            padding: 10px 18px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .align-btn {
-            width: 28px;
-            height: 28px;
-            border-radius: 6px;
-            border: 1.5px solid var(--border);
-            background: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: var(--text-mid);
-            transition: all 0.15s;
-        }
-
-        .align-btn.active {
-            background: var(--blue-light);
-            border-color: var(--blue);
-            color: var(--blue);
-        }
-
-        .align-btn:hover {
-            border-color: var(--blue);
-            color: var(--blue);
-        }
-
-        .align-btn svg {
-            width: 13px;
-            height: 13px;
-        }
-
-        /* TEXT section */
-        .panel-section {
-            padding: 14px 18px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .section-label {
-            font-size: 10px;
-            font-weight: 600;
-            color: var(--text-light);
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-        }
-
-        .font-select,
-        .panel-input {
-            width: 100%;
-            padding: 8px 12px;
-            border: 1.5px solid var(--border);
-            border-radius: 8px;
-            font-size: 13px;
-            font-family: 'DM Sans', sans-serif;
-            color: var(--text-dark);
-            background: var(--white);
-            cursor: pointer;
-            appearance: none;
-            outline: none;
-            transition: border-color 0.15s;
-            margin-bottom: 8px;
-        }
-
-        .font-select:focus,
-        .panel-input:focus {
-            border-color: var(--blue);
-        }
-
-        .font-row {
-            display: flex;
-            gap: 8px;
-        }
-
-        .weight-select {
-            flex: 1.2;
-        }
-
-        .size-wrap {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            border: 1.5px solid var(--border);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        .size-label {
-            padding: 0 8px;
-            font-size: 11px;
-            color: var(--text-light);
-        }
-
-        .size-input {
-            flex: 1;
-            border: none;
-            outline: none;
-            font-size: 13px;
-            font-family: 'DM Sans', sans-serif;
-            padding: 8px 4px;
-            width: 40px;
-            text-align: center;
-            color: var(--text-dark);
-        }
-
-        .color-row {
-            display: flex;
-            align-items: center;
-            border: 1.5px solid var(--border);
-            border-radius: 8px;
-            overflow: hidden;
-            margin-top: 4px;
-        }
-
-        .color-swatch {
-            width: 28px;
-            height: 34px;
-            background: #C1C6D6;
-            cursor: pointer;
-            flex-shrink: 0;
-            border-right: 1.5px solid var(--border);
-        }
-
-        .color-hex {
-            flex: 1;
-            padding: 0 10px;
-            font-size: 12px;
-            font-family: monospace;
-            color: var(--text-dark);
-            border: none;
-            outline: none;
-        }
-
-        .color-arrow {
-            padding: 0 8px;
-            color: var(--text-light);
-            font-size: 10px;
-        }
-
-        /* TEXT FILL */
-        .fill-section {
-            padding: 14px 18px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .fill-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .fill-label {
-            font-size: 10px;
-            font-weight: 600;
-            color: var(--text-light);
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-        }
-
-        .fill-mode {
-            font-size: 11px;
-            color: var(--text-mid);
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        /* Color picker gradient */
-        .color-picker-wrap {
-            border-radius: 10px;
-            overflow: hidden;
-            margin-bottom: 10px;
-            position: relative;
-            height: 160px;
-            cursor: crosshair;
-        }
-
-        .gradient-field {
-            width: 100%;
-            height: 100%;
-            background:
-                linear-gradient(to bottom, transparent, black),
-                linear-gradient(to right, white, #3b6ef8);
-            position: relative;
-        }
-
-        .picker-thumb {
-            position: absolute;
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            border: 2.5px solid white;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
-            top: 60%;
-            right: 25%;
-            transform: translate(50%, 50%);
-            pointer-events: none;
-        }
-
-        .hue-slider-wrap {
-            position: relative;
-            margin-bottom: 8px;
-        }
-
-        .hue-slider {
-            width: 100%;
-            height: 10px;
-            border-radius: 5px;
-            background: linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #ff0000);
-            appearance: none;
-            outline: none;
-            border: none;
-            cursor: pointer;
-        }
-
-        .hue-slider::-webkit-slider-thumb {
-            appearance: none;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: white;
-            border: 2px solid #ddd;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-            cursor: pointer;
-        }
-
-        .hex-opacity-row {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-            margin-top: 8px;
-        }
-
-        .eyedropper-btn {
-            width: 28px;
-            height: 28px;
-            border: 1.5px solid var(--border);
-            border-radius: 6px;
-            background: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: var(--text-mid);
-            flex-shrink: 0;
-        }
-
-        .eyedropper-btn svg {
-            width: 13px;
-            height: 13px;
-        }
-
-        .hex-input-wrap {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            border: 1.5px solid var(--border);
-            border-radius: 7px;
-            overflow: hidden;
-            padding: 0 8px;
-        }
-
-        .hex-input {
-            border: none;
-            outline: none;
-            font-size: 12px;
-            font-family: monospace;
-            color: var(--text-dark);
-            flex: 1;
-            padding: 6px 0;
-        }
-
-        .hex-type {
-            font-size: 10px;
-            color: var(--text-light);
-            font-weight: 600;
-        }
-
-        .opacity-wrap {
-            display: flex;
-            align-items: center;
-            border: 1.5px solid var(--border);
-            border-radius: 7px;
-            padding: 0 8px;
-            gap: 4px;
-        }
-
-        .opacity-input {
-            width: 32px;
-            border: none;
-            outline: none;
-            font-size: 12px;
-            color: var(--text-dark);
-            text-align: right;
-            padding: 6px 0;
-        }
-
-        .opacity-pct {
-            font-size: 11px;
-            color: var(--text-light);
-        }
-
-        /* Presets */
-        .presets-section {
-            padding: 12px 18px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .presets-label {
-            font-size: 10px;
-            font-weight: 600;
-            color: var(--text-light);
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-        }
-
-        .presets-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 7px;
-        }
-
-        .preset-dot {
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            cursor: pointer;
-            border: 2px solid transparent;
-            transition: transform 0.15s, border-color 0.15s;
-            flex-shrink: 0;
-        }
-
-        .preset-dot:hover {
-            transform: scale(1.15);
-        }
-
-        .preset-dot.active {
-            border-color: var(--blue);
-        }
-
-        /* Spacing section */
-        .spacing-section {
-            padding: 14px 18px;
-        }
-
-        .spacing-title {
-            font-size: 10px;
-            font-weight: 600;
-            color: var(--text-light);
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            margin-bottom: 12px;
-        }
-
-        .spacing-visual {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0;
-        }
-
-        .sp-outer {
-            width: 120px;
-            height: 100px;
-            border: 2px dashed var(--border);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-
-        .sp-inner {
-            width: 60px;
-            height: 50px;
-            border: 2px solid var(--blue);
-            border-radius: 4px;
-            background: rgba(59, 110, 248, 0.07);
-        }
-
-        .sp-label {
-            position: absolute;
-            font-size: 10px;
-            color: var(--text-light);
-            font-weight: 600;
-        }
-
-        .sp-label.top {
-            top: 4px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        .sp-label.bottom {
-            bottom: 4px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        .sp-label.left {
-            left: 4px;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
-        .sp-label.right {
-            right: 4px;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
-        .spacing-inputs {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            margin-left: 16px;
-        }
-
-        .sp-input-row {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .sp-input-label {
-            font-size: 10px;
-            color: var(--text-light);
-            width: 16px;
-            text-align: center;
-        }
-
-        .sp-input {
-            width: 54px;
-            border: 1.5px solid var(--border);
-            border-radius: 6px;
-            padding: 5px 8px;
-            font-size: 12px;
-            color: var(--text-dark);
-            font-family: 'DM Sans', sans-serif;
-            outline: none;
-            text-align: center;
-            transition: border-color 0.15s;
-        }
-
-        .sp-input:focus {
-            border-color: var(--blue);
-        }
-
-        .sp-unit {
-            font-size: 10px;
-            color: var(--text-light);
-        }
-
-        /* Width row */
-        .width-section {
-            padding: 0 18px 14px;
-        }
-
-        .width-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 8px;
-        }
-
-        .width-label {
-            font-size: 11px;
-            color: var(--text-mid);
-            width: 14px;
-            text-align: center;
-        }
-
-        .width-input-wrap {
-            display: flex;
-            align-items: center;
-            border: 1.5px solid var(--border);
-            border-radius: 7px;
-            padding: 0 8px;
-            gap: 4px;
-        }
-
-        .width-value {
-            font-size: 12px;
-            color: var(--text-dark);
-            padding: 6px 0;
-            width: 36px;
-            text-align: center;
-            border: none;
-            outline: none;
-            font-family: 'DM Sans', sans-serif;
-        }
-
-        .width-unit {
-            font-size: 10px;
-            color: var(--text-light);
-        }
-
-        /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--border);
-            border-radius: 2px;
-        }
-
-        /* ─── MOBILE BOTTOM NAV ─── */
-        .mobile-nav {
-            display: none;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 60px;
-            background: var(--white);
-            border-top: 1px solid var(--border);
-            z-index: 100;
-            align-items: center;
-            justify-content: space-around;
-            padding: 0 8px;
-        }
-
-        .mobile-nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 3px;
-            cursor: pointer;
-            flex: 1;
-            padding: 8px 4px;
-            color: var(--text-light);
-            border-radius: 10px;
-            transition: color 0.15s, background 0.15s;
-            font-size: 9px;
-            font-weight: 600;
-            letter-spacing: 0.04em;
-        }
-
-        .mobile-nav-item.active {
-            color: var(--blue);
-            background: var(--blue-light);
-        }
-
-        .mobile-nav-item svg {
-            width: 20px;
-            height: 20px;
-        }
-
-        /* ─── MOBILE PANEL DRAWER ─── */
-        .panel-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.3);
-            z-index: 200;
-            opacity: 0;
-            transition: opacity 0.25s;
-        }
-
-        .panel-overlay.show {
-            opacity: 1;
-        }
-
-        /* ─── MOBILE TOGGLE BUTTON ─── */
-        .panel-toggle-btn {
-            display: none;
-            align-items: center;
-            justify-content: center;
-            width: 36px;
-            height: 36px;
-            border-radius: 9px;
-            border: 1.5px solid var(--border);
-            background: var(--white);
-            cursor: pointer;
-            color: var(--text-mid);
-        }
-
-        .panel-toggle-btn svg {
-            width: 16px;
-            height: 16px;
-        }
-
-        /* ─── TABLET (≤900px) ─── */
-        @media (max-width: 900px) {
-            :root {
-                --right-w: 280px;
-            }
-
-            .breadcrumb a {
-                display: none;
-            }
-
-            .breadcrumb .sep:not(:last-of-type) {
-                display: none;
-            }
-
-            .publish-btn {
-                padding: 8px 12px;
-                font-size: 12px;
-            }
-        }
-
-        /* ─── MOBILE (≤680px) ─── */
-        @media (max-width: 680px) {
-            body {
-                flex-direction: column;
-                height: 100dvh;
-                overflow: hidden;
-            }
-
-            /* Hide desktop sidebar */
-            .sidebar {
-                display: none;
-            }
-
-            /* Show mobile bottom nav */
-            .mobile-nav {
-                display: flex;
-            }
-
-            /* Show panel toggle button */
-            .panel-toggle-btn {
-                display: flex;
-            }
-
-            /* Top nav adjustments */
-            .topnav {
-                padding: 0 14px;
-                height: 48px;
-            }
-
-            .breadcrumb {
-                font-size: 12px;
-                gap: 4px;
-            }
-
-            .breadcrumb a {
-                display: none;
-            }
-
-            .breadcrumb .sep {
-                display: none;
-            }
-
-            .breadcrumb .current {
-                font-size: 13px;
-                font-weight: 600;
-                color: var(--text-dark);
-            }
-
-            .topnav-right .icon-btn {
-                display: none;
-            }
-
-            .publish-btn {
-                padding: 7px 12px;
-                font-size: 12px;
-                border-radius: 8px;
-            }
-
-            /* Content stacks vertically */
-            .content {
-                flex-direction: column;
-                overflow: hidden;
-            }
-
-            /* Canvas area full width */
-            .canvas-area {
-                padding: 16px 14px 80px;
-                overflow-y: auto;
-            }
-
-            /* Preview card full width */
-            .preview-card {
-                max-width: 100%;
-                border-radius: 14px;
-            }
-
-            .preview-hero {
-                height: 150px;
-            }
-
-            .preview-body {
-                padding: 18px 18px 0;
-            }
-
-            .h1-text {
-                font-size: 16px;
-                padding: 3px 10px;
-            }
-
-            .h2-text {
-                font-size: 14px;
-            }
-
-            .h3-text {
-                font-size: 12px;
-            }
-
-            .body-text {
-                font-size: 11px;
-            }
-
-            .preview-footer {
-                padding: 14px 18px;
-            }
-
-            /* Right panel becomes bottom drawer */
-            .right-panel {
-                position: fixed;
-                bottom: 60px;
-                left: 0;
-                right: 0;
-                height: 75dvh;
-                width: 100% !important;
-                border-left: none;
-                border-top: 1px solid var(--border);
-                border-radius: 20px 20px 0 0;
-                box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.12);
-                z-index: 250;
-                transform: translateY(100%);
-                transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
-                overflow-y: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-
-            .right-panel.open {
-                transform: translateY(0);
-            }
-
-            /* Drawer handle */
-            .right-panel::before {
-                content: '';
-                display: block;
-                width: 36px;
-                height: 4px;
-                background: var(--border);
-                border-radius: 2px;
-                margin: 10px auto 4px;
-                flex-shrink: 0;
-            }
-
-            /* Panel overlay */
-            .panel-overlay {
-                display: block;
-                pointer-events: none;
-            }
-
-            .panel-overlay.show {
-                pointer-events: all;
-            }
-
-            /* Panel sections on mobile */
-            .panel-section {
-                padding: 12px 16px;
-            }
-
-            .fill-section {
-                padding: 12px 16px;
-            }
-
-            .presets-section {
-                padding: 10px 16px;
-            }
-
-            .align-tools {
-                padding: 8px 16px;
-                flex-wrap: wrap;
-                gap: 6px;
-            }
-        }
-
-        /* ─── SMALL MOBILE (≤380px) ─── */
-        @media (max-width: 380px) {
-            .h1-text {
-                font-size: 14px;
-            }
-
-            .h2-text {
-                font-size: 13px;
-            }
-
-            .canvas-area {
-                padding: 12px 10px 80px;
-            }
-
-            .presets-grid {
-                gap: 6px;
-            }
-
-            .preset-dot {
-                width: 20px;
-                height: 20px;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Theme Customizer</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#f0f2f7;--white:#fff;--blue:#3b6ef8;--blue-l:#eef1ff;--dark:#1a1d2e;--mid:#6b7080;--muted:#a0a5b8;--border:#e8ebf5;--red:#ef4444}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);height:100vh;display:flex;overflow:hidden;color:var(--dark)}
+.sidebar{width:60px;background:var(--white);display:flex;flex-direction:column;align-items:center;padding:14px 0;gap:4px;border-right:1px solid var(--border);z-index:10;flex-shrink:0}
+.sb-logo{width:36px;height:36px;background:var(--blue);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+.sb-logo svg{width:18px;height:18px;fill:#fff}
+.sb-icon{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);transition:.15s}
+.sb-icon:hover,.sb-icon.active{background:var(--blue-l);color:var(--blue)}
+.sb-icon svg{width:17px;height:17px}
+.sb-div{width:30px;height:1px;background:var(--border);margin:8px 0}
+.sb-btm{margin-top:auto;display:flex;flex-direction:column;align-items:center;gap:4px}
+.sb-av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#f97316,#ec4899);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:#fff;cursor:pointer}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topnav{height:52px;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;flex-shrink:0}
+.bc{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--mid)}
+.bc a{color:var(--mid);text-decoration:none}.bc a:hover{color:var(--blue)}.bc .sep{color:var(--muted)}.bc .cur{color:var(--dark);font-weight:500}
+.nav-r{display:flex;align-items:center;gap:10px}
+.ib{width:34px;height:34px;border-radius:8px;border:1.5px solid var(--border);background:var(--white);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--mid);transition:.15s}
+.ib:hover{border-color:var(--blue);color:var(--blue)}.ib svg{width:15px;height:15px}
+.pub{background:var(--blue);color:#fff;border:none;border-radius:9px;padding:9px 18px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;transition:.15s}
+.pub:hover{background:#2b5ce6}
+.tog-btn{display:none;align-items:center;justify-content:center;width:36px;height:36px;border-radius:9px;border:1.5px solid var(--border);background:var(--white);cursor:pointer;color:var(--mid)}
+.tog-btn svg{width:16px;height:16px}
+.mob-bar{display:none;overflow-x:auto;background:var(--white);border-bottom:1px solid var(--border);padding:0 10px;flex-shrink:0;scrollbar-width:none}
+.mob-bar::-webkit-scrollbar{display:none}
+.mob-inner{display:flex;align-items:center;gap:2px;padding:6px 0;width:max-content}
+.mi{display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 12px;border-radius:10px;cursor:pointer;color:var(--muted);transition:.15s;white-space:nowrap;min-width:56px;flex-shrink:0}
+.mi:hover,.mi.active{background:var(--blue-l);color:var(--blue)}.mi svg{width:18px;height:18px}.mi span{font-size:10px;font-weight:600}
+.mi-sep{width:1px;height:28px;background:var(--border);margin:0 4px;flex-shrink:0}
+.mi-av{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#f97316,#ec4899);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;cursor:pointer;flex-shrink:0}
+.content{flex:1;display:flex;overflow:hidden}
+.canvas{flex:1;overflow:auto;position:relative;background:radial-gradient(circle,#d0d4e0 1px,transparent 1px) var(--bg);background-size:24px 24px;display:flex;align-items:center;justify-content:center}
+.canvas-empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;pointer-events:none}
+.ce-icon{width:60px;height:60px;border:2px dashed var(--border);border-radius:16px;display:flex;align-items:center;justify-content:center}
+.ce-icon svg{width:26px;height:26px;color:var(--muted)}
+.canvas-empty h3{font-size:15px;font-weight:600;color:var(--mid)}
+.canvas-empty p{font-size:12px;color:var(--muted);max-width:220px;line-height:1.6}
+.canvas-empty strong{color:var(--blue)}
+.layer-wrap{display:none;flex-direction:column;align-items:center;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}
+.layer-wrap.vis{display:flex}
+.c-layer{background:#fff;border:1.5px solid #c8d0ea;border-radius:4px;position:relative;overflow:hidden;box-shadow:0 2px 6px rgba(59,110,248,.07),0 8px 32px rgba(0,0,0,.1);flex-shrink:0}
+.c-layer::before,.c-layer::after{content:'';position:absolute;width:8px;height:8px;border-radius:2px;background:var(--blue);z-index:10}
+.c-layer::before{top:-4px;left:-4px}.c-layer::after{bottom:-4px;right:-4px}
+.lc{position:absolute;width:8px;height:8px;border-radius:2px;background:var(--blue);z-index:10}
+.lc.tr{top:-4px;right:-4px}.lc.bl{bottom:-4px;left:-4px}
+.l-sel{position:absolute;inset:-1px;border:1.5px solid var(--blue);border-radius:4px;pointer-events:none;opacity:.5;z-index:9}
+.layer-img-grid{position:absolute;inset:0;display:grid;overflow:hidden}
+.layer-img-grid.c1{grid-template-columns:1fr;grid-template-rows:1fr}
+.layer-img-grid.c2{grid-template-columns:1fr 1fr}
+.layer-img-grid.c3{grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr}
+.layer-img-grid.c3 .lg-item:first-child{grid-row:span 2}
+.layer-img-grid.c4{grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr}
+.layer-img-grid.cmany{grid-template-columns:repeat(3,1fr)}
+.lg-item{position:relative;overflow:hidden;min-height:0;min-width:0;cursor:pointer;user-select:none}
+.lg-item.selected{z-index:2}
+/* crop viewport — clips the image; panning/zoom happen inside */
+.lg-crop{position:absolute;inset:0;overflow:hidden}
+.lg-item img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:block;transform-origin:center center;transition:none}
+.lg-item .lg-num{position:absolute;top:6px;left:6px;background:rgba(0,0,0,.55);color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;z-index:6;pointer-events:none}
+.lg-item .lg-lbl{position:absolute;bottom:0;left:0;right:0;padding:18px 8px 6px;background:linear-gradient(transparent,rgba(0,0,0,.55));font-size:10px;font-weight:600;color:rgba(255,255,255,.9);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:0;transition:.15s;z-index:6;pointer-events:none}
+.lg-item:hover .lg-lbl{opacity:1}
+/* selection border */
+.lg-item .lg-ring{position:absolute;inset:0;border:2px solid var(--blue);pointer-events:none;opacity:0;z-index:5}
+.lg-item.selected .lg-ring{opacity:1}
+/* 8 resize handles — only visible on selected item */
+.rh{position:absolute;width:10px;height:10px;background:#fff;border:2px solid var(--blue);border-radius:2px;z-index:8;opacity:0;transition:opacity .15s;box-shadow:0 1px 4px rgba(0,0,0,.25)}
+.lg-item.selected .rh{opacity:1}
+.rh.tl{top:-5px;left:-5px;cursor:nw-resize}
+.rh.tc{top:-5px;left:calc(50% - 5px);cursor:n-resize}
+.rh.tr{top:-5px;right:-5px;cursor:ne-resize}
+.rh.ml{top:calc(50% - 5px);left:-5px;cursor:w-resize}
+.rh.mr{top:calc(50% - 5px);right:-5px;cursor:e-resize}
+.rh.bl{bottom:-5px;left:-5px;cursor:sw-resize}
+.rh.bc{bottom:-5px;left:calc(50% - 5px);cursor:s-resize}
+.rh.br{bottom:-5px;right:-5px;cursor:se-resize}
+.layer-placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;pointer-events:none;color:var(--muted)}
+.layer-placeholder svg{width:32px;height:32px}
+.layer-placeholder p{font-size:12px;text-align:center;padding:0 16px;line-height:1.5}
+
+/* ── RIGHT PANEL ── */
+.rpanel{width:300px;background:var(--white);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
+.rp-tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
+.rp-tab{flex:1;padding:11px 4px;font-size:11px;font-weight:600;color:var(--muted);cursor:pointer;text-align:center;border-bottom:2.5px solid transparent;transition:.15s;user-select:none;display:flex;align-items:center;justify-content:center;gap:4px}
+.rp-tab svg{width:12px;height:12px;flex-shrink:0}
+.rp-tab:hover{color:var(--dark)}.rp-tab.on{color:var(--blue);border-bottom-color:var(--blue)}
+.rp-view{flex:1;overflow-y:auto;display:none;flex-direction:column}
+.rp-view.on{display:flex}
+
+/* layers list */
+.lv-hdr{padding:12px 14px 10px;border-bottom:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:space-between}
+.lv-title{font-size:13px;font-weight:700;color:var(--dark)}
+.lv-add{width:26px;height:26px;border-radius:7px;background:var(--blue-l);border:none;color:var(--blue);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.15s}
+.lv-add:hover{background:var(--blue);color:#fff}.lv-add svg{width:13px;height:13px}
+.lv-list{flex:1;overflow-y:auto;padding:8px}
+.lv-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:40px 16px;text-align:center;color:var(--muted)}
+.lv-empty svg{width:30px;height:30px;opacity:.4}.lv-empty p{font-size:11px;line-height:1.5}
+.lv-item{display:flex;align-items:center;gap:9px;padding:8px 9px;border-radius:10px;cursor:pointer;transition:.15s;border:1.5px solid transparent;margin-bottom:4px}
+.lv-item:hover{background:#f7f8fc}.lv-item.active{background:var(--blue-l);border-color:rgba(59,110,248,.22)}
+.lv-thumb{width:42px;height:32px;border-radius:6px;overflow:hidden;flex-shrink:0;background:#e8ebf5;border:1px solid var(--border)}
+.lv-thumb img{width:100%;height:100%;object-fit:cover}
+.lv-info{flex:1;min-width:0}
+.lv-name{font-size:11px;font-weight:600;color:var(--dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lv-meta{font-size:10px;color:var(--muted);margin-top:1px}
+.lv-acts{display:flex;gap:2px;flex-shrink:0}
+.lv-act{width:22px;height:22px;border-radius:5px;border:none;background:none;cursor:pointer;color:var(--muted);display:flex;align-items:center;justify-content:center;transition:.15s}
+.lv-act:hover.vis-btn{color:var(--blue)}.lv-act:hover.del-btn{color:var(--red)}.lv-act svg{width:12px;height:12px}
+
+/* no-selection message */
+.no-sel-msg{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:50px 20px;text-align:center;color:var(--muted);flex:1}
+.no-sel-msg svg{width:34px;height:34px;opacity:.35}.no-sel-msg p{font-size:11px;line-height:1.6}
+
+/* prop sections */
+.ps{padding:11px 14px;border-bottom:1px solid var(--border)}
+.ps-lbl{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:9px;display:flex;align-items:center;gap:5px}
+.ps-lbl svg{width:11px;height:11px}
+
+/* image preview */
+.img-prev{width:100%;height:100px;border-radius:9px;overflow:hidden;position:relative;background:#e8ebf5;margin-bottom:8px}
+.img-prev img{width:100%;height:100%;object-fit:cover}
+.img-prev-ov{position:absolute;inset:0;background:linear-gradient(transparent 55%,rgba(0,0,0,.45));display:flex;align-items:flex-end;padding:7px 9px}
+.img-prev-name{font-size:10px;font-weight:600;color:#fff}
+.repl-btn{width:100%;padding:7px;border:1.5px solid var(--border);border-radius:8px;background:none;color:var(--mid);font-size:11px;font-weight:600;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;transition:.15s}
+.repl-btn:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-l)}.repl-btn svg{width:12px;height:12px}
+
+/* transform grid */
+.tc-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.tc-btn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;border:1.5px solid var(--border);border-radius:8px;background:none;cursor:pointer;color:var(--mid);font-family:inherit;font-size:9px;font-weight:700;transition:.15s;letter-spacing:.03em;text-transform:uppercase}
+.tc-btn svg{width:15px;height:15px}.tc-btn:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-l)}
+.tc-btn.on{background:var(--blue-l);border-color:var(--blue);color:var(--blue)}
+.tc-full{grid-column:span 2}
+
+/* sliders */
+.sl-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.sl-lbl{font-size:10px;color:var(--mid);font-weight:600;width:50px;flex-shrink:0}
+input[type=range].sl{flex:1;height:4px;border-radius:2px;appearance:none;outline:none;border:none;cursor:pointer;background:var(--border)}
+input[type=range].sl::-webkit-slider-thumb{appearance:none;width:13px;height:13px;border-radius:50%;background:var(--blue);border:2px solid #fff;box-shadow:0 1px 4px rgba(59,110,248,.4);cursor:pointer}
+.sl-val{width:30px;text-align:right;font-size:10px;font-weight:700;color:var(--dark);flex-shrink:0}
+
+/* number inputs */
+.ni-row{display:flex;gap:5px;margin-bottom:7px}
+.ni-wrap{flex:1;display:flex;flex-direction:column;gap:3px}
+.ni-lbl{font-size:9px;color:var(--muted);font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+.ni-inp{width:100%;border:1.5px solid var(--border);border-radius:7px;padding:6px 6px;font-size:11px;font-family:inherit;color:var(--dark);outline:none;text-align:center;transition:.15s}
+.ni-inp:focus{border-color:var(--blue)}
+
+/* delete zone */
+.del-zone{padding:10px 14px 14px;flex-shrink:0}
+.del-btn-full{width:100%;padding:9px;border:1.5px solid #fca5a5;border-radius:9px;background:#fee2e2;color:var(--red);font-size:11px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:.15s}
+.del-btn-full:hover{background:var(--red);color:#fff;border-color:var(--red)}.del-btn-full svg{width:13px;height:13px}
+
+/* modals */
+.m-ov{position:fixed;inset:0;background:rgba(15,18,35,.45);backdrop-filter:blur(5px);z-index:8000;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s;padding:16px}
+.m-ov.show{opacity:1;visibility:visible}
+.sm{background:#fff;border-radius:20px;width:100%;max-width:420px;box-shadow:0 24px 64px rgba(0,0,0,.18);overflow:hidden;transform:translateY(20px) scale(.97);transition:transform .35s cubic-bezier(.34,1.3,.64,1)}
+.m-ov.show .sm{transform:translateY(0) scale(1)}
+.sm-hdr{padding:20px 22px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.sm-t{font-size:15px;font-weight:700;color:var(--dark)}.sm-s{font-size:11px;color:var(--muted);margin-top:2px}
+.sm-x{width:30px;height:30px;border-radius:8px;border:1.5px solid var(--border);background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--mid);transition:.15s}
+.sm-x:hover{background:#fee2e2;border-color:#fca5a5;color:#ef4444}.sm-x svg{width:14px;height:14px}
+.sm-body{padding:18px 22px}
+.sm-lbl{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px}
+.sm-pg{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.spc{border:1.5px solid var(--border);border-radius:12px;padding:12px 8px 10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;transition:.18s}
+.spc:hover,.spc.sel{border-color:var(--blue);background:var(--blue-l);box-shadow:0 0 0 3px rgba(59,110,248,.15)}
+.spd{font-size:11px;font-weight:600;color:var(--mid)}.spc.sel .spd{color:var(--blue)}
+.sm-cr{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+.sm-ig{display:flex;flex-direction:column;gap:5px}.sm-il{font-size:11px;font-weight:600;color:var(--mid)}
+.sm-in{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;font-family:inherit;color:var(--dark);outline:none;transition:.15s}
+.sm-in:focus{border-color:var(--blue)}
+.sm-ut{display:flex;gap:4px;background:var(--bg);border-radius:9px;padding:3px;margin-bottom:18px;width:fit-content}
+.sm-ub{padding:5px 14px;border-radius:7px;border:none;background:none;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;font-family:inherit;transition:.15s}
+.sm-ub.active{background:#fff;color:var(--blue);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.sm-ftr{padding:14px 22px 20px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end}
+.sm-cancel{padding:9px 20px;border:1.5px solid var(--border);border-radius:9px;background:none;font-size:13px;font-weight:600;font-family:inherit;color:var(--mid);cursor:pointer}
+.sm-apply{padding:9px 24px;background:var(--blue);color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:6px;transition:.15s}
+.sm-apply:hover{background:#2b5ce6}.sm-apply svg{width:14px;height:14px}
+#tmov{position:fixed;inset:0;background:rgba(8,10,25,.65);backdrop-filter:blur(12px);z-index:9500;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s;padding:16px}
+#tmov.show{opacity:1;visibility:visible}
+.tm{background:#fff;border-radius:24px;width:100%;max-width:1000px;height:min(92vh,740px);display:flex;flex-direction:column;overflow:hidden;box-shadow:0 48px 120px rgba(0,0,0,.3);transform:scale(.92) translateY(36px);transition:transform .4s cubic-bezier(.34,1.1,.64,1)}
+#tmov.show .tm{transform:scale(1) translateY(0)}
+.tm-hdr{padding:0 26px;border-bottom:1px solid var(--border);flex-shrink:0;background:#fff}
+.tm-top{display:flex;align-items:center;justify-content:space-between;padding:18px 0 16px}
+.tm-ttl{font-size:18px;font-weight:700;color:var(--dark);display:flex;align-items:center;gap:10px}
+.tm-ico{width:38px;height:38px;border-radius:11px;background:var(--blue-l);display:flex;align-items:center;justify-content:center;color:var(--blue)}
+.tm-ico svg{width:19px;height:19px}
+.tm-x{width:36px;height:36px;border-radius:11px;border:1.5px solid var(--border);background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--mid);transition:.15s}
+.tm-x:hover{background:#fee2e2;border-color:#fca5a5;color:#ef4444}.tm-x svg{width:14px;height:14px}
+.tm-sf{display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+.tm-srch{flex:1;min-width:200px;display:flex;align-items:center;border:1.5px solid var(--border);border-radius:12px;padding:0 14px;gap:9px;background:#fafbfe;transition:.15s}
+.tm-srch:focus-within{border-color:var(--blue);box-shadow:0 0 0 3px rgba(59,110,248,.1);background:#fff}
+.tm-srch svg{width:15px;height:15px;color:var(--muted);flex-shrink:0}
+.srch-i{border:none;outline:none;background:none;font-size:13px;font-family:inherit;color:var(--dark);flex:1;padding:11px 0}
+.srch-i::placeholder{color:var(--muted)}
+.srch-clr{width:20px;height:20px;border-radius:50%;background:var(--muted);border:none;cursor:pointer;display:none;align-items:center;justify-content:center;color:#fff;flex-shrink:0}
+.srch-clr.on{display:flex}.srch-clr svg{width:9px;height:9px}
+.fil-pills{display:flex;gap:5px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;flex-shrink:0}
+.fil-pills::-webkit-scrollbar{display:none}
+.fp{padding:7px 14px;border-radius:20px;border:1.5px solid var(--border);background:#fff;font-size:11px;font-weight:600;color:var(--mid);cursor:pointer;white-space:nowrap;transition:.15s;font-family:inherit;flex-shrink:0}
+.fp:hover{border-color:var(--blue);color:var(--blue)}.fp.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.cat-row{display:flex;overflow-x:auto;scrollbar-width:none;margin:0 -26px;padding:0 26px;border-top:1px solid var(--border)}
+.cat-row::-webkit-scrollbar{display:none}
+.ct{padding:11px 18px;font-size:13px;font-weight:600;color:var(--mid);cursor:pointer;border-bottom:2.5px solid transparent;white-space:nowrap;transition:.15s;flex-shrink:0;user-select:none}
+.ct:hover{color:var(--dark)}.ct.on{color:var(--blue);border-bottom-color:var(--blue)}
+.tm-body{flex:1;overflow-y:auto;padding:22px 26px}
+.grid-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.grid-title{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.07em;text-transform:uppercase}
+.grid-count{font-size:12px;color:var(--muted);font-weight:500}
+.ph-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:13px}
+.ph-item{position:relative;border-radius:14px;overflow:hidden;cursor:pointer;aspect-ratio:4/3;border:2.5px solid transparent;background:#dde1ee;transition:transform .2s,border-color .2s,box-shadow .2s}
+.ph-item:hover{transform:translateY(-4px);box-shadow:0 10px 30px rgba(0,0,0,.16)}
+.ph-item.on{border-color:var(--blue);box-shadow:0 0 0 3px rgba(59,110,248,.22)}
+.ph-item img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s}
+.ph-item:hover img{transform:scale(1.06)}
+.ph-sel-ov{position:absolute;inset:0;background:rgba(59,110,248,.1);opacity:0;transition:.18s}
+.ph-item.on .ph-sel-ov{opacity:1}
+.ph-chk{position:absolute;top:9px;right:9px;width:28px;height:28px;border-radius:50%;background:var(--blue);border:2.5px solid #fff;display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(.45) rotate(-20deg);transition:opacity .22s,transform .22s;box-shadow:0 4px 14px rgba(59,110,248,.55)}
+.ph-item.on .ph-chk{opacity:1;transform:scale(1) rotate(0)}.ph-chk svg{width:13px;height:13px;color:#fff}
+.ph-lbl{position:absolute;bottom:0;left:0;right:0;padding:24px 11px 9px;background:linear-gradient(transparent,rgba(0,0,0,.58));font-size:11px;font-weight:600;color:rgba(255,255,255,.93);opacity:0;transition:.18s}
+.ph-item:hover .ph-lbl{opacity:1}
+.no-res{display:none;flex-direction:column;align-items:center;gap:14px;padding:56px 20px;text-align:center}
+.no-res.on{display:flex}
+.nri{width:74px;height:74px;border-radius:20px;background:var(--bg);display:flex;align-items:center;justify-content:center}
+.nri svg{width:32px;height:32px;color:var(--muted)}
+.no-res h3{font-size:16px;font-weight:700;color:var(--mid)}.no-res p{font-size:13px;color:var(--muted);max-width:260px;line-height:1.6}
+.nr-clr{padding:9px 22px;background:var(--blue-l);color:var(--blue);border:none;border-radius:10px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;margin-top:2px;transition:.15s}
+.nr-clr:hover{background:#d4e0fe}
+.tm-ftr{padding:15px 26px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:#fafbfd}
+.sel-info{display:flex;align-items:center;gap:12px}
+.sel-badge{display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:700;transition:.2s;white-space:nowrap}
+.sel-badge.empty{background:var(--bg);color:var(--muted)}.sel-badge.has{background:var(--blue-l);color:var(--blue)}
+.sel-badge svg{width:13px;height:13px}.sel-txt{font-size:13px;color:var(--mid);font-weight:500}
+.ftr-btns{display:flex;gap:10px}
+.f-cncl{padding:9px 20px;border:1.5px solid var(--border);border-radius:10px;background:none;font-size:13px;font-weight:600;font-family:inherit;color:var(--mid);cursor:pointer;transition:.15s}
+.f-cncl:hover{border-color:var(--mid);color:var(--dark)}
+.f-add{padding:9px 22px;background:var(--blue);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:7px;transition:.15s}
+.f-add:hover:not(:disabled){background:#2b5ce6;transform:translateY(-1px)}.f-add:disabled{opacity:.38;cursor:not-allowed}
+.f-add svg{width:14px;height:14px}
+.f-add .badge{background:rgba(255,255,255,.28);border-radius:10px;padding:1px 8px;font-size:11px;font-weight:700;display:none}
+.f-add .badge.on{display:inline-block}
+#loader{position:fixed;inset:0;background:#fff;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;transition:opacity .45s,visibility .45s}
+#loader.gone{opacity:0;visibility:hidden;pointer-events:none}
+.ld-logo{width:52px;height:52px;background:var(--blue);border-radius:16px;display:flex;align-items:center;justify-content:center;animation:ldPop .6s cubic-bezier(.34,1.56,.64,1) both}
+.ld-logo svg{width:26px;height:26px;fill:#fff}
+.ld-ttl{font-size:15px;font-weight:700;color:var(--dark);animation:ldUp .5s .15s both}
+.ld-sub{font-size:12px;color:var(--muted);animation:ldUp .5s .25s both;margin-top:-10px}
+.ld-bw{width:180px;height:4px;background:var(--border);border-radius:4px;overflow:hidden;animation:ldUp .5s .3s both}
+.ld-bf{height:100%;width:0;background:linear-gradient(90deg,var(--blue),#818cf8);border-radius:4px;animation:ldProg 1.8s .35s cubic-bezier(.4,0,.2,1) forwards}
+.ld-dots{display:flex;gap:6px;animation:ldUp .5s .2s both}
+.ld-dots span{width:7px;height:7px;border-radius:50%;background:var(--blue);opacity:.25;animation:ldDot 1.2s infinite ease-in-out}
+.ld-dots span:nth-child(2){animation-delay:.15s}.ld-dots span:nth-child(3){animation-delay:.3s}
+@keyframes ldPop{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes ldUp{from{transform:translateY(10px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes ldProg{0%{width:0}60%{width:75%}85%{width:92%}100%{width:100%}}
+@keyframes ldDot{0%,80%,100%{opacity:.2;transform:scale(.8)}40%{opacity:1;transform:scale(1.1)}}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(8px);background:var(--dark);color:#fff;padding:10px 20px;border-radius:12px;font-size:13px;font-weight:500;z-index:99999;opacity:0;transition:opacity .22s,transform .22s;pointer-events:none;white-space:nowrap;box-shadow:0 4px 24px rgba(0,0,0,.25)}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.pov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:200;opacity:0;transition:opacity .25s}
+.pov.show{opacity:1}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+@media(max-width:680px){
+  body{flex-direction:column;height:100dvh}.sidebar{display:none}
+  .main{flex:1;flex-direction:column;min-height:0}.topnav{padding:0 14px;height:48px}
+  .bc a,.bc .sep{display:none}.nav-r .ib{display:none}.mob-bar{display:flex}.tog-btn{display:flex}
+  .content{flex:1;min-height:0;flex-direction:column}.canvas{flex:1;min-height:0;overflow:auto;padding:14px}
+  .rpanel{position:fixed;bottom:0;left:0;right:0;height:75dvh;width:100%!important;border-left:none;border-top:1px solid var(--border);border-radius:20px 20px 0 0;box-shadow:0 -8px 32px rgba(0,0,0,.12);z-index:250;transform:translateY(100%);transition:transform .35s cubic-bezier(.32,.72,0,1);overflow-y:auto}
+  .rpanel.open{transform:translateY(0)}.rpanel::before{content:'';display:block;width:36px;height:4px;background:var(--border);border-radius:2px;margin:10px auto 4px}
+  .pov{display:block;pointer-events:none}.pov.show{pointer-events:all}
+  .tm{max-width:100%;height:96dvh;border-radius:20px}.ph-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+  .tm-hdr{padding:0 16px}.tm-body{padding:16px}.tm-sf{flex-wrap:wrap}.tm-ftr{padding:12px 16px}
+  .cat-row{margin:0 -16px;padding:0 16px}
+}
+</style>
 </head>
-
 <body>
 
-    <!-- LEFT SIDEBAR -->
-    <nav class="sidebar">
-        <div class="sidebar-logo">
-            <svg viewBox="0 0 24 24">
-                <path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.18L20 8.5v7L12 20 4 15.5v-7L12 4.18z" />
-            </svg>
+<div id="loader">
+  <div class="ld-logo"><svg viewBox="0 0 24 24"><path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.18L20 8.5v7L12 20 4 15.5v-7L12 4.18z"/></svg></div>
+  <div class="ld-ttl">Theme Customizer</div><div class="ld-sub">Setting up your workspace…</div>
+  <div class="ld-dots"><span></span><span></span><span></span></div>
+  <div class="ld-bw"><div class="ld-bf"></div></div>
+</div>
+
+<!-- SIZE MODAL -->
+<div class="m-ov" id="sizeOv">
+  <div class="sm">
+    <div class="sm-hdr">
+      <div><div class="sm-t">Edit Layer Size</div><div class="sm-s">Choose a preset or set custom dimensions</div></div>
+      <button class="sm-x" id="szX"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="sm-body">
+      <div class="sm-lbl">Preset Sizes</div>
+      <div class="sm-pg" id="szPresets">
+        <div class="spc sel" data-w="1920" data-h="1080"><div class="spd">1920×1080</div></div>
+        <div class="spc" data-w="1280" data-h="800"><div class="spd">1280×800</div></div>
+        <div class="spc" data-w="768" data-h="1024"><div class="spd">768×1024</div></div>
+        <div class="spc" data-w="375" data-h="812"><div class="spd">375×812</div></div>
+        <div class="spc" data-w="1080" data-h="1080"><div class="spd">1080×1080</div></div>
+        <div class="spc" data-w="1200" data-h="628"><div class="spd">1200×628</div></div>
+      </div>
+      <div class="sm-lbl">Custom Size</div>
+      <div class="sm-ut" id="szUnits">
+        <button class="sm-ub active" data-unit="px">px</button>
+        <button class="sm-ub" data-unit="%">%</button>
+        <button class="sm-ub" data-unit="em">em</button>
+      </div>
+      <div class="sm-cr">
+        <div class="sm-ig"><label class="sm-il">Width</label><input type="number" class="sm-in" id="szW" value="1920" min="1"></div>
+        <div class="sm-ig"><label class="sm-il">Height</label><input type="number" class="sm-in" id="szH" value="1080" min="1"></div>
+      </div>
+    </div>
+    <div class="sm-ftr">
+      <button class="sm-cancel" id="szCancel">Cancel</button>
+      <button class="sm-apply" id="szApply"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Apply Size</button>
+    </div>
+  </div>
+</div>
+
+<!-- TEMPLATE MODAL -->
+<div id="tmov">
+  <div class="tm">
+    <div class="tm-hdr">
+      <div class="tm-top">
+        <div class="tm-ttl"><div class="tm-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="8" height="5" rx="1.2"/><rect x="13" y="3" width="8" height="5" rx="1.2"/><rect x="3" y="11" width="8" height="10" rx="1.2"/><rect x="13" y="11" width="8" height="10" rx="1.2"/></svg></div>Template Gallery</div>
+        <button class="tm-x" id="tmX"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+      <div class="tm-sf">
+        <div class="tm-srch">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" class="srch-i" id="srchInput" placeholder="Search templates…">
+          <button class="srch-clr" id="srchClr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
         </div>
-
-        <div class="sidebar-icon active" title="Dashboard">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="3" width="7" height="7" rx="1" />
-                <rect x="14" y="3" width="7" height="7" rx="1" />
-                <rect x="3" y="14" width="7" height="7" rx="1" />
-                <rect x="14" y="14" width="7" height="7" rx="1" />
-            </svg>
+        <div class="fil-pills" id="filters">
+          <button class="fp on" data-f="all">All</button>
+          <button class="fp" data-f="popular">⭐ Popular</button>
+          <button class="fp" data-f="new">✨ New</button>
+          <button class="fp" data-f="minimal">◻ Minimal</button>
+          <button class="fp" data-f="dark">🌑 Dark</button>
+          <button class="fp" data-f="colorful">🎨 Colorful</button>
         </div>
-        <div class="sidebar-icon" title="Calendar">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="4" width="18" height="18" rx="2" />
-                <path d="M16 2v4M8 2v4M3 10h18" />
-            </svg>
+      </div>
+      <div class="cat-row" id="catRow"></div>
+    </div>
+    <div class="tm-body">
+      <div class="grid-hdr"><div class="grid-title" id="gridTitle">All Templates</div><div class="grid-count" id="gridCount"></div></div>
+      <div class="ph-grid" id="phGrid"></div>
+      <div class="no-res" id="noRes">
+        <div class="nri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div>
+        <h3>No images found</h3><p id="noResMsg">Try a different search term or category.</p>
+        <button class="nr-clr" id="noResClr">Clear filters</button>
+      </div>
+    </div>
+    <div class="tm-ftr">
+      <div class="sel-info">
+        <div class="sel-badge empty" id="selBadge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span id="selNum">0</span></div>
+        <span class="sel-txt" id="selTxt">No images selected</span>
+      </div>
+      <div class="ftr-btns">
+        <button class="f-cncl" id="tmCancel">Cancel</button>
+        <button class="f-add" id="tmAdd" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add to Canvas <span class="badge" id="addBadge">0</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sb-logo"><svg viewBox="0 0 24 24"><path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.18L20 8.5v7L12 20 4 15.5v-7L12 4.18z"/></svg></div>
+  <div class="sb-icon active" id="sbSize" title="Layer Size"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/><path d="M14 14l3 3m0 0l-3 0m3 0V14"/></svg></div>
+  <div class="sb-icon" id="sbTmpl" title="Templates"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="8" height="5" rx="1.2"/><rect x="13" y="3" width="8" height="5" rx="1.2"/><rect x="3" y="11" width="8" height="10" rx="1.2"/><rect x="13" y="11" width="8" height="10" rx="1.2"/></svg></div>
+  <div class="sb-icon" title="Messages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+  <div class="sb-icon" title="Bookmark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></div>
+  <div class="sb-icon" title="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 19.07l-1.41 1.41M19.07 19.07l-1.41-1.41M4.93 4.93l1.41 1.41M21 12h-2M5 12H3M12 21v-2M12 5V3"/></svg></div>
+  <div class="sb-div"></div>
+  <div class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg></div>
+  <div class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+  <div class="sb-btm">
+    <div class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg></div>
+    <div class="sb-av">O</div>
+  </div>
+</nav>
+
+<div class="main">
+  <header class="topnav">
+    <div class="bc">
+      <svg style="width:15px;height:15px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span class="sep">›</span><a href="#">Customization</a><span class="sep">›</span><a href="#">Themes</a><span class="sep">›</span><span class="cur">Create</span>
+    </div>
+    <div class="nav-r">
+      <div class="ib"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
+      <div class="ib"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
+      <button class="tog-btn" id="panelTog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 19.07l-1.41 1.41M19.07 19.07l-1.41-1.41M4.93 4.93l1.41 1.41M21 12h-2M5 12H3M12 21v-2M12 5V3"/></svg></button>
+      <button class="pub">Publish Changes</button>
+    </div>
+  </header>
+  <div class="mob-bar">
+    <div class="mob-inner">
+      <div class="mi active" id="mSbSize"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/></svg><span>Sizes</span></div>
+      <div class="mi" id="mSbTmpl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="8" height="5" rx="1.2"/><rect x="13" y="3" width="8" height="5" rx="1.2"/><rect x="3" y="11" width="8" height="10" rx="1.2"/><rect x="13" y="11" width="8" height="10" rx="1.2"/></svg><span>Templates</span></div>
+      <div class="mi-sep"></div><div class="mi-av">O</div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="canvas" id="canvas">
+      <div class="canvas-empty" id="canvasEmpty">
+        <div class="ce-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg></div>
+        <h3>Canvas is empty</h3>
+        <p>Click <strong>Layer Size</strong> to begin, then add <strong>Templates</strong></p>
+      </div>
+      <div class="layer-wrap" id="layerWrap">
+        <div class="c-layer" id="cLayer">
+          <div class="lc tr"></div><div class="lc bl"></div>
+          <div class="layer-img-grid" id="layerImgGrid"></div>
+          <div class="layer-placeholder" id="layerPlaceholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <p>Click <strong>Templates</strong> to add images here</p>
+          </div>
+          <div class="l-sel"></div>
         </div>
-        <div class="sidebar-icon" title="Messages">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-            </svg>
-        </div>
-        <div class="sidebar-icon" title="Bookmark">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
-            </svg>
-        </div>
-        <div class="sidebar-icon" title="Settings">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="3" />
-                <path
-                    d="M19.07 4.93l-1.41 1.41M4.93 19.07l-1.41 1.41M19.07 19.07l-1.41-1.41M4.93 4.93l1.41 1.41M21 12h-2M5 12H3M12 21v-2M12 5V3" />
-            </svg>
-        </div>
-
-        <div class="sidebar-divider"></div>
-
-        <div class="sidebar-icon" title="Cloud">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" />
-            </svg>
-        </div>
-        <div class="sidebar-icon" title="Star">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polygon
-                    points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-            </svg>
-        </div>
-        <div class="sidebar-icon" title="Lock">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="11" width="18" height="11" rx="2" />
-                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-            </svg>
-        </div>
-
-        <div class="sidebar-bottom">
-            <div class="sidebar-icon" title="Help">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10" />
-                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01" />
-                </svg>
-            </div>
-            <div class="sidebar-icon" title="User">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="8" r="4" />
-                    <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
-                </svg>
-            </div>
-            <div class="sidebar-avatar">O</div>
-        </div>
-    </nav>
-
-    <!-- MAIN -->
-    <div class="main">
-        <!-- TOP NAV -->
-        <header class="topnav">
-            <div class="breadcrumb">
-                <svg class="home-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                    <polyline points="9 22 9 12 15 12 15 22" />
-                </svg>
-                <span class="sep">›</span>
-                <a href="#">Customization</a>
-                <span class="sep">›</span>
-                <a href="#">Themes</a>
-                <span class="sep">›</span>
-                <span class="current">Create</span>
-            </div>
-            <div class="topnav-right">
-                <div class="icon-btn" title="Preview">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="2" y="3" width="20" height="14" rx="2" />
-                        <path d="M8 21h8M12 17v4" />
-                    </svg>
-                </div>
-                <div class="icon-btn" title="Share">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="18" cy="5" r="3" />
-                        <circle cx="6" cy="12" r="3" />
-                        <circle cx="18" cy="19" r="3" />
-                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
-                        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
-                    </svg>
-                </div>
-                <button class="panel-toggle-btn" id="panelToggleBtn" title="Properties">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="3" />
-                        <path
-                            d="M19.07 4.93l-1.41 1.41M4.93 19.07l-1.41 1.41M19.07 19.07l-1.41-1.41M4.93 4.93l1.41 1.41M21 12h-2M5 12H3M12 21v-2M12 5V3" />
-                    </svg>
-                </button>
-                <button class="publish-btn">Publish Changes</button>
-            </div>
-        </header>
-
-        <!-- CONTENT AREA -->
-        <div class="content">
-            <!-- CENTER CANVAS -->
-            <div class="canvas-area">
-                <div class="preview-card">
-                    <!-- Hero -->
-                    <div class="preview-hero">
-                        <div class="upload-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="3" y="3" width="18" height="18" rx="2" />
-                                <circle cx="8.5" cy="8.5" r="1.5" />
-                                <polyline points="21 15 16 10 5 21" />
-                            </svg>
-                        </div>
-                        <span class="drag-label">Drag and Drop your files</span>
-                    </div>
-
-                    <!-- Body -->
-                    <div class="preview-body">
-                        <div class="h1-text">{H1} Welcome The Themes</div>
-                        <div class="h2-text">{H2} You are now in the General Tab</div>
-                        <div class="h3-text">{H3} You can edit everything you see here!</div>
-                        <div class="body-text">{Body} When you are done with this tab, do not forget to visit the
-                            Preview Language and the Hotspot Tabs! Build interactive product guides in minutes with our
-                            user-friendly "No-code" solution.</div>
-                    </div>
-
-                    <!-- Progress bar -->
-                    <div style="padding: 0 28px; margin-top: 18px;">
-                        <div class="progress-bar">
-                            <div class="progress-fill"></div>
-                        </div>
-                    </div>
-
-                    <!-- Footer -->
-                    <div class="preview-footer">
-                        <button class="prev-btn">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M15 18l-6-6 6-6" />
-                            </svg>
-                            Previous
-                        </button>
-                        <button class="done-btn">
-                            Done
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="20 6 9 17 4 12" />
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- RIGHT PANEL -->
-            <aside class="right-panel">
-                <!-- Header -->
-                <div class="panel-header">
-                    <div class="panel-title">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M15 18l-6-6 6-6" />
-                        </svg>
-                        New Header
-                    </div>
-                </div>
-
-                <!-- Align tools -->
-                <div class="align-tools">
-                    <button class="align-btn" title="Align left">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="3" y1="6" x2="21" y2="6" />
-                            <line x1="3" y1="12" x2="15" y2="12" />
-                            <line x1="3" y1="18" x2="18" y2="18" />
-                        </svg>
-                    </button>
-                    <button class="align-btn" title="Columns">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="3" width="8" height="18" rx="1" />
-                            <rect x="13" y="3" width="8" height="18" rx="1" />
-                        </svg>
-                    </button>
-                    <button class="align-btn" title="Grid">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="3" width="7" height="7" rx="1" />
-                            <rect x="14" y="3" width="7" height="7" rx="1" />
-                            <rect x="3" y="14" width="7" height="7" rx="1" />
-                            <rect x="14" y="14" width="7" height="7" rx="1" />
-                        </svg>
-                    </button>
-                    <button class="align-btn active" title="Center">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="3" y1="6" x2="21" y2="6" />
-                            <line x1="6" y1="12" x2="18" y2="12" />
-                            <line x1="3" y1="18" x2="21" y2="18" />
-                        </svg>
-                    </button>
-                    <button class="align-btn" title="Distribute">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="3" y1="6" x2="21" y2="6" />
-                            <line x1="3" y1="18" x2="21" y2="18" />
-                            <line x1="12" y1="6" x2="12" y2="18" />
-                        </svg>
-                    </button>
-                    <button class="align-btn" title="Space">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="2" y="4" width="20" height="16" rx="2" />
-                            <line x1="8" y1="4" x2="8" y2="20" />
-                            <line x1="16" y1="4" x2="16" y2="20" />
-                        </svg>
-                    </button>
-                </div>
-
-                <!-- TEXT section -->
-                <div class="panel-section">
-                    <div class="section-label">Text</div>
-                    <div style="position:relative;">
-                        <select class="font-select" style="padding-right:28px;">
-                            <option>Gilroy</option>
-                            <option>DM Sans</option>
-                            <option>Helvetica Neue</option>
-                            <option>Georgia</option>
-                        </select>
-                        <svg style="position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none;width:12px;height:12px;color:var(--text-light);"
-                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="6 9 12 15 18 9" />
-                        </svg>
-                    </div>
-
-                    <div class="font-row">
-                        <div style="flex:1.2;position:relative;">
-                            <select class="font-select weight-select" style="margin-bottom:0;padding-right:28px;">
-                                <option>Bold</option>
-                                <option>Regular</option>
-                                <option>Medium</option>
-                                <option>SemiBold</option>
-                            </select>
-                            <svg style="position:absolute;right:8px;top:50%;transform:translateY(-50%);pointer-events:none;width:12px;height:12px;color:var(--text-light);"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="6 9 12 15 18 9" />
-                            </svg>
-                        </div>
-                        <div class="size-wrap">
-                            <span class="size-label">Aa</span>
-                            <input type="number" class="size-input" value="14">
-                            <span class="size-label">px</span>
-                        </div>
-                    </div>
-
-                    <!-- Color row -->
-                    <div class="color-row" style="margin-top:8px;">
-                        <div class="color-swatch" id="textColorSwatch"></div>
-                        <input type="text" class="color-hex" value="#C1C6D6" readonly>
-                        <svg style="width:12px;height:12px;color:var(--text-light);margin-right:8px;flex-shrink:0;"
-                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="6 9 12 15 18 9" />
-                        </svg>
-                    </div>
-                </div>
-
-                <!-- TEXT FILL -->
-                <div class="fill-section">
-                    <div class="fill-header">
-                        <span class="fill-label">Text Fill</span>
-                        <span class="fill-mode">
-                            <svg style="width:12px;height:12px;" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2">
-                                <circle cx="12" cy="12" r="10" />
-                            </svg>
-                            Normal
-                        </span>
-                    </div>
-
-                    <!-- Gradient picker -->
-                    <div class="color-picker-wrap">
-                        <div class="gradient-field" id="gradientField">
-                            <div class="picker-thumb" id="pickerThumb"></div>
-                        </div>
-                    </div>
-
-                    <!-- Hue slider -->
-                    <div class="hue-slider-wrap">
-                        <input type="range" class="hue-slider" id="hueSlider" min="0" max="360" value="220">
-                    </div>
-
-                    <!-- Hex + opacity row -->
-                    <div class="hex-opacity-row">
-                        <button class="eyedropper-btn">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M2 22l4-4m0 0l10-10a2.83 2.83 0 0 0-4-4L2 14m4 4l4-4M18 2l4 4-10 10" />
-                            </svg>
-                        </button>
-                        <div class="hex-input-wrap">
-                            <input type="text" class="hex-input" value="#C1C6D6" id="hexInput">
-                            <span class="hex-type">HEX</span>
-                            <svg style="width:10px;height:10px;color:var(--text-light);margin-left:4px;"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="6 9 12 15 18 9" />
-                            </svg>
-                        </div>
-                        <div class="opacity-wrap">
-                            <input type="number" class="opacity-input" value="80" min="0" max="100">
-                            <span class="opacity-pct">%</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- PRESETS -->
-                <div class="presets-section">
-                    <div class="presets-label">Presets</div>
-                    <div class="presets-grid" id="presetsGrid"></div>
-                </div>
-
-                <!-- Width section -->
-                <div class="width-section" style="padding-top:12px;padding-bottom:0;">
-                    <div class="width-row">
-                        <span class="width-label" style="font-size:10px;color:var(--text-light);">%</span>
-                        <div style="flex:1;"></div>
-                        <div class="width-input-wrap">
-                            <span class="width-unit">←→</span>
-                            <input type="number" class="width-value" value="20.5">
-                            <span class="width-unit">%</span>
-                        </div>
-                    </div>
-
-                    <!-- Spacing rows + visual -->
-                    <div style="display:flex;gap:12px;align-items:center;margin-top:10px;">
-                        <!-- Visual box -->
-                        <div
-                            style="position:relative;width:110px;height:95px;border:2px dashed var(--border);border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
-                            <div
-                                style="width:55px;height:48px;border:2px solid var(--blue);border-radius:4px;background:rgba(59,110,248,0.07);">
-                            </div>
-                            <span
-                                style="position:absolute;top:5px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--text-light);font-weight:600;">15</span>
-                            <span
-                                style="position:absolute;bottom:5px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--text-light);font-weight:600;">15</span>
-                            <span
-                                style="position:absolute;left:5px;top:50%;transform:translateY(-50%);font-size:9px;color:var(--text-light);font-weight:600;">20</span>
-                            <span
-                                style="position:absolute;right:5px;top:50%;transform:translateY(-50%);font-size:9px;color:var(--text-light);font-weight:600;">20</span>
-                        </div>
-
-                        <!-- Input controls -->
-                        <div style="display:flex;flex-direction:column;gap:5px;flex:1;">
-                            <div style="display:flex;align-items:center;gap:5px;">
-                                <input type="number" class="sp-input" value="15" style="width:100%;font-size:11px;">
-                                <span class="sp-unit">px</span>
-                            </div>
-                            <div style="display:flex;align-items:center;gap:5px;">
-                                <input type="number" class="sp-input" value="240" style="width:100%;font-size:11px;">
-                                <span class="sp-unit">px</span>
-                            </div>
-                            <div style="display:flex;align-items:center;gap:5px;">
-                                <input type="number" class="sp-input" value="15" style="width:100%;font-size:11px;">
-                                <span class="sp-unit">px</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Align icons bottom -->
-                    <div style="display:flex;gap:4px;margin-top:10px;justify-content:flex-end;">
-                        <button class="align-btn">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <line x1="3" y1="6" x2="21" y2="6" />
-                                <line x1="3" y1="12" x2="15" y2="12" />
-                                <line x1="3" y1="18" x2="18" y2="18" />
-                            </svg>
-                        </button>
-                        <button class="align-btn">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <line x1="3" y1="6" x2="21" y2="6" />
-                                <line x1="6" y1="12" x2="18" y2="12" />
-                                <line x1="3" y1="18" x2="21" y2="18" />
-                            </svg>
-                        </button>
-                        <button class="align-btn">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <line x1="3" y1="6" x2="21" y2="6" />
-                                <line x1="9" y1="12" x2="21" y2="12" />
-                                <line x1="6" y1="18" x2="21" y2="18" />
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-
-                <div style="height:20px;"></div>
-            </aside>
-        </div>
+      </div>
     </div>
 
-    <!-- Panel overlay -->
-    <div class="panel-overlay" id="panelOverlay"></div>
-
-    <!-- Mobile bottom nav -->
-    <nav class="mobile-nav">
-        <div class="mobile-nav-item active" data-tab="home">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="3" width="7" height="7" rx="1" />
-                <rect x="14" y="3" width="7" height="7" rx="1" />
-                <rect x="3" y="14" width="7" height="7" rx="1" />
-                <rect x="14" y="14" width="7" height="7" rx="1" />
-            </svg>
-            Home
+    <!-- RIGHT PANEL -->
+    <aside class="rpanel" id="rpanel">
+      <div class="rp-tabs">
+        <div class="rp-tab on" data-tab="Layers">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>Layers
         </div>
-        <div class="mobile-nav-item" data-tab="themes">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path
-                    d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-            </svg>
-            Themes
+        <div class="rp-tab" data-tab="Props">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Properties
         </div>
-        <div class="mobile-nav-item" data-tab="props" id="mobilePropsBtn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="3" />
-                <path
-                    d="M19.07 4.93l-1.41 1.41M4.93 19.07l-1.41 1.41M19.07 19.07l-1.41-1.41M4.93 4.93l1.41 1.41M21 12h-2M5 12H3M12 21v-2M12 5V3" />
-            </svg>
-            Props
+      </div>
+
+      <!-- LAYERS VIEW -->
+      <div class="rp-view on" id="viewLayers">
+        <div class="lv-hdr">
+          <div class="lv-title">Image Layers</div>
+          <button class="lv-add" id="lvAdd" title="Add templates">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
         </div>
-        <div class="mobile-nav-item" data-tab="preview">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                <circle cx="12" cy="12" r="3" />
-            </svg>
-            Preview
+        <div class="lv-list" id="lvList">
+          <div class="lv-empty" id="lvEmpty">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <p>No image layers yet.<br>Click <strong>+</strong> to add templates.</p>
+          </div>
         </div>
-        <div class="mobile-nav-item" data-tab="settings">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                <polyline points="9 22 9 12 15 12 15 22" />
-            </svg>
-            Menu
+      </div>
+
+      <!-- PROPERTIES VIEW -->
+      <div class="rp-view" id="viewProps">
+        <div class="no-sel-msg" id="noSelMsg">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 15l6 6m-11-4a7 7 0 1 1 0-14 7 7 0 0 1 0 14z"/></svg>
+          <p>Select a layer from the <strong>Layers</strong> tab to edit its properties</p>
         </div>
-    </nav>
+        <div id="propsContent" style="display:none;flex-direction:column;flex:1;overflow-y:auto">
+          <!-- Preview -->
+          <div class="ps">
+            <div class="img-prev">
+              <img id="ppImg" src="" alt="">
+              <div class="img-prev-ov"><span class="img-prev-name" id="ppName"></span></div>
+            </div>
+            <button class="repl-btn" id="replBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Replace Image
+            </button>
+          </div>
 
-    <script>
-        // ─── Preset colors ───
-        const presetColors = [
-            '#F97316', '#EF4444', '#EAB308', '#22C55E',
-            '#14B8A6', '#3B82F6', '#8B5CF6', '#EC4899',
-            '#1E293B', '#334155', '#64748B', '#94A3B8',
-            '#CBD5E1', '#E2E8F0', '#F1F5F9', '#F8FAFC'
-        ];
+          <!-- Transform -->
+          <div class="ps">
+            <div class="ps-lbl">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3l14 9-14 9V3z"/></svg>Transform
+            </div>
+            <div class="tc-grid">
+              <button class="tc-btn" id="btnRotL"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2.5 2v6h6M2.66 15.57a10 10 0 1 0 .57-8.38"/></svg>Rotate L</button>
+              <button class="tc-btn" id="btnRotR"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38"/></svg>Rotate R</button>
+              <button class="tc-btn" id="btnFlipH"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v14c0 1.1.9 2 2 2h3"/><path d="M16 3h3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-3"/><line x1="12" y1="20" x2="12" y2="4"/></svg>Flip H</button>
+              <button class="tc-btn" id="btnFlipV"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v3"/><path d="M21 16v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-3"/><line x1="4" y1="12" x2="20" y2="12"/></svg>Flip V</button>
+              <button class="tc-btn tc-full" id="btnResetT"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Reset Transform</button>
+            </div>
+          </div>
 
-        const grid = document.getElementById('presetsGrid');
-        presetColors.forEach((c, i) => {
-            const dot = document.createElement('div');
-            dot.className = 'preset-dot' + (i === 4 ? ' active' : '');
-            dot.style.background = c;
-            dot.title = c;
-            dot.addEventListener('click', () => {
-                document.querySelectorAll('.preset-dot').forEach(d => d.classList.remove('active'));
-                dot.classList.add('active');
-                document.getElementById('hexInput').value = c;
-                document.getElementById('textColorSwatch').style.background = c;
-                updateGradient(c);
-            });
-            grid.appendChild(dot);
-        });
+          <!-- Rotation & Scale -->
+          <div class="ps">
+            <div class="ps-lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Rotation &amp; Scale</div>
+            <div class="sl-row">
+              <span class="sl-lbl">Rotation</span>
+              <input type="range" class="sl" id="slRotate" min="-180" max="180" value="0">
+              <span class="sl-val" id="valRotate">0°</span>
+            </div>
+            <div class="sl-row">
+              <span class="sl-lbl">Scale</span>
+              <input type="range" class="sl" id="slScale" min="20" max="200" value="100">
+              <span class="sl-val" id="valScale">100%</span>
+            </div>
+          </div>
 
-        // ─── Hue slider → update gradient ───
-        function hslToHex(h) {
-            const s = 1, l = 0.5;
-            const a = s * Math.min(l, 1 - l);
-            const f = n => {
-                const k = (n + h / 30) % 12;
-                const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
-                return Math.round(255 * color).toString(16).padStart(2, '0');
-            };
-            return `#${f(0)}${f(8)}${f(4)}`;
-        }
+          <!-- Opacity -->
+          <div class="ps">
+            <div class="ps-lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20V2z"/></svg>Opacity</div>
+            <div class="sl-row">
+              <span class="sl-lbl">Opacity</span>
+              <input type="range" class="sl" id="slOpacity" min="0" max="100" value="100">
+              <span class="sl-val" id="valOpacity">100%</span>
+            </div>
+          </div>
 
-        function updateGradient(color) {
-            const field = document.getElementById('gradientField');
-            field.style.background = `
-      linear-gradient(to bottom, transparent, black),
-      linear-gradient(to right, white, ${color})
-    `;
-        }
+          <!-- Crop / Position -->
+          <div class="ps">
+            <div class="ps-lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M18 22V8a2 2 0 0 0-2-2H2"/></svg>Crop &amp; Position</div>
+            <div class="ni-row">
+              <div class="ni-wrap"><div class="ni-lbl">X Offset (px)</div><input type="number" class="ni-inp" id="niX" value="0"></div>
+              <div class="ni-wrap"><div class="ni-lbl">Y Offset (px)</div><input type="number" class="ni-inp" id="niY" value="0"></div>
+            </div>
+            <div class="ni-row">
+              <div class="ni-wrap"><div class="ni-lbl">Width %</div><input type="number" class="ni-inp" id="niW" value="100" min="10" max="300"></div>
+              <div class="ni-wrap"><div class="ni-lbl">Height %</div><input type="number" class="ni-inp" id="niH" value="100" min="10" max="300"></div>
+            </div>
+          </div>
 
-        document.getElementById('hueSlider').addEventListener('input', function () {
-            const hex = hslToHex(+this.value);
-            updateGradient(hex);
-            document.getElementById('hexInput').value = hex;
-        });
+          <!-- Delete -->
+          <div class="del-zone">
+            <button class="del-btn-full" id="delLayerBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+              Delete This Layer
+            </button>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
 
-        // ─── Interactive picker thumb drag ───
-        const field = document.getElementById('gradientField');
-        const thumb = document.getElementById('pickerThumb');
-        let dragging = false;
+<div class="pov" id="pov"></div>
+<div id="toast"></div>
 
-        field.addEventListener('mousedown', e => {
-            dragging = true;
-            movePicker(e);
-        });
-        document.addEventListener('mousemove', e => { if (dragging) movePicker(e); });
-        document.addEventListener('mouseup', () => dragging = false);
+<script>
+const CATS=['All','Business','Nature','Technology','Food','Travel','Abstract','Fashion','Architecture'];
+const TEMPLATES=[
+  {id:1,cat:'Business',name:'Corporate Blue',tags:['popular','minimal'],img:'https://picsum.photos/seed/biz1/400/300'},
+  {id:2,cat:'Business',name:'Team Meeting',tags:['popular'],img:'https://picsum.photos/seed/biz2/400/300'},
+  {id:3,cat:'Business',name:'Office Space',tags:['new','minimal'],img:'https://picsum.photos/seed/biz3/400/300'},
+  {id:4,cat:'Business',name:'Dark Dashboard',tags:['dark'],img:'https://picsum.photos/seed/biz4/400/300'},
+  {id:5,cat:'Business',name:'Brand Report',tags:['new','colorful'],img:'https://picsum.photos/seed/biz5/400/300'},
+  {id:6,cat:'Business',name:'Pitch Deck',tags:['popular','colorful'],img:'https://picsum.photos/seed/biz6/400/300'},
+  {id:7,cat:'Nature',name:'Forest Path',tags:['popular','minimal'],img:'https://picsum.photos/seed/nat1/400/300'},
+  {id:8,cat:'Nature',name:'Ocean Sunset',tags:['colorful'],img:'https://picsum.photos/seed/nat2/400/300'},
+  {id:9,cat:'Nature',name:'Mountain Vista',tags:['popular'],img:'https://picsum.photos/seed/nat3/400/300'},
+  {id:10,cat:'Nature',name:'Flower Fields',tags:['new','colorful'],img:'https://picsum.photos/seed/nat4/400/300'},
+  {id:11,cat:'Nature',name:'Desert Dunes',tags:['minimal'],img:'https://picsum.photos/seed/nat5/400/300'},
+  {id:12,cat:'Nature',name:'Dark Forest',tags:['dark'],img:'https://picsum.photos/seed/nat6/400/300'},
+  {id:13,cat:'Technology',name:'Circuit Board',tags:['dark','popular'],img:'https://picsum.photos/seed/tec1/400/300'},
+  {id:14,cat:'Technology',name:'Code Screen',tags:['dark'],img:'https://picsum.photos/seed/tec2/400/300'},
+  {id:15,cat:'Technology',name:'Neon Lights',tags:['colorful','dark'],img:'https://picsum.photos/seed/tec3/400/300'},
+  {id:16,cat:'Technology',name:'Future Robot',tags:['new'],img:'https://picsum.photos/seed/tec4/400/300'},
+  {id:17,cat:'Technology',name:'Data Flow',tags:['minimal'],img:'https://picsum.photos/seed/tec5/400/300'},
+  {id:18,cat:'Food',name:'Fresh Salad',tags:['colorful','popular'],img:'https://picsum.photos/seed/foo1/400/300'},
+  {id:19,cat:'Food',name:'Artisan Coffee',tags:['minimal','popular'],img:'https://picsum.photos/seed/foo2/400/300'},
+  {id:20,cat:'Food',name:'Rustic Bread',tags:['new'],img:'https://picsum.photos/seed/foo3/400/300'},
+  {id:21,cat:'Food',name:'Pasta Night',tags:['colorful'],img:'https://picsum.photos/seed/foo4/400/300'},
+  {id:22,cat:'Food',name:'Dessert Plate',tags:['new','colorful'],img:'https://picsum.photos/seed/foo5/400/300'},
+  {id:23,cat:'Travel',name:'Paris Streets',tags:['popular'],img:'https://picsum.photos/seed/tra1/400/300'},
+  {id:24,cat:'Travel',name:'Tokyo Nights',tags:['dark','colorful'],img:'https://picsum.photos/seed/tra2/400/300'},
+  {id:25,cat:'Travel',name:'Bali Temple',tags:['new'],img:'https://picsum.photos/seed/tra3/400/300'},
+  {id:26,cat:'Travel',name:'NYC Skyline',tags:['popular','minimal'],img:'https://picsum.photos/seed/tra4/400/300'},
+  {id:27,cat:'Travel',name:'Safari',tags:['colorful'],img:'https://picsum.photos/seed/tra5/400/300'},
+  {id:28,cat:'Abstract',name:'Gradient Mesh',tags:['colorful','popular'],img:'https://picsum.photos/seed/abs1/400/300'},
+  {id:29,cat:'Abstract',name:'Dark Waves',tags:['dark'],img:'https://picsum.photos/seed/abs2/400/300'},
+  {id:30,cat:'Abstract',name:'Geo Minimal',tags:['minimal'],img:'https://picsum.photos/seed/abs3/400/300'},
+  {id:31,cat:'Abstract',name:'Neon Splash',tags:['colorful','dark'],img:'https://picsum.photos/seed/abs4/400/300'},
+  {id:32,cat:'Abstract',name:'Blueprint',tags:['minimal','new'],img:'https://picsum.photos/seed/abs5/400/300'},
+  {id:33,cat:'Fashion',name:'Runway Look',tags:['popular','new'],img:'https://picsum.photos/seed/fas1/400/300'},
+  {id:34,cat:'Fashion',name:'Monochrome',tags:['minimal','dark'],img:'https://picsum.photos/seed/fas2/400/300'},
+  {id:35,cat:'Fashion',name:'Vibrant Palette',tags:['colorful'],img:'https://picsum.photos/seed/fas3/400/300'},
+  {id:36,cat:'Fashion',name:'Street Style',tags:['popular'],img:'https://picsum.photos/seed/fas4/400/300'},
+  {id:37,cat:'Architecture',name:'Glass Tower',tags:['minimal','popular'],img:'https://picsum.photos/seed/arc1/400/300'},
+  {id:38,cat:'Architecture',name:'Old Cathedral',tags:['new'],img:'https://picsum.photos/seed/arc2/400/300'},
+  {id:39,cat:'Architecture',name:'Brutalist Facade',tags:['dark','minimal'],img:'https://picsum.photos/seed/arc3/400/300'},
+  {id:40,cat:'Architecture',name:'Colorful Houses',tags:['colorful'],img:'https://picsum.photos/seed/arc4/400/300'},
+];
 
-        function movePicker(e) {
-            const rect = field.getBoundingClientRect();
-            const x = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
-            const y = Math.max(0, Math.min(e.clientY - rect.top, rect.height));
-            thumb.style.right = 'auto';
-            thumb.style.bottom = 'auto';
-            thumb.style.left = (x - 7) + 'px';
-            thumb.style.top = (y - 7) + 'px';
-        }
+// ── STATE ──
+let selIds=new Set(), curCat='All', curFil='all', srchQ='';
+let layers=[], activeUid=null, uidCtr=0, replaceMode=false;
 
-        // ─── Align buttons toggle ───
-        document.querySelectorAll('.align-tools .align-btn').forEach(btn => {
-            btn.addEventListener('click', function () {
-                this.closest('.align-tools').querySelectorAll('.align-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
+function mkLayer(t){
+  return{uid:++uidCtr,id:t.id,img:t.img,name:t.name,
+    props:{rotate:0,scaleX:1,scaleY:1,opacity:1,offsetX:0,offsetY:0,width:100,height:100,visible:true}};
+}
 
-        // ─── Sidebar icon toggle ───
-        document.querySelectorAll('.sidebar-icon').forEach(icon => {
-            icon.addEventListener('click', function () {
-                document.querySelectorAll('.sidebar-icon').forEach(i => i.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
+// ── DOM ──
+const canvas=document.getElementById('canvas');
+const cEmpty=document.getElementById('canvasEmpty');
+const layerImgGrid=document.getElementById('layerImgGrid');
+const layerPlaceholder=document.getElementById('layerPlaceholder');
+const layerWrap=document.getElementById('layerWrap');
+const lvList=document.getElementById('lvList');
+const lvEmpty=document.getElementById('lvEmpty');
 
-        // ─── Mobile panel drawer ───
-        const panel = document.querySelector('.right-panel');
-        const overlay = document.getElementById('panelOverlay');
-        const toggleBtn = document.getElementById('panelToggleBtn');
-        const mobilePropsBtn = document.getElementById('mobilePropsBtn');
+// ── PANEL TABS ──
+document.querySelectorAll('.rp-tab').forEach(tab=>{
+  tab.addEventListener('click',function(){
+    document.querySelectorAll('.rp-tab').forEach(t=>t.classList.remove('on'));
+    document.querySelectorAll('.rp-view').forEach(v=>v.classList.remove('on'));
+    this.classList.add('on');
+    document.getElementById('view'+this.dataset.tab).classList.add('on');
+  });
+});
 
-        function openPanel() {
-            panel.classList.add('open');
-            overlay.classList.add('show');
-            if (mobilePropsBtn) mobilePropsBtn.classList.add('active');
-        }
-        function closePanel() {
-            panel.classList.remove('open');
-            overlay.classList.remove('show');
-            if (mobilePropsBtn) mobilePropsBtn.classList.remove('active');
-        }
+// ── LAYER LIST ──
+function renderLayerList(){
+  lvList.querySelectorAll('.lv-item').forEach(e=>e.remove());
+  lvEmpty.style.display=layers.length===0?'':'none';
+  [...layers].reverse().forEach(lyr=>{
+    const el=document.createElement('div');
+    el.className='lv-item'+(lyr.uid===activeUid?' active':'');
+    el.innerHTML=`
+      <div class="lv-thumb"><img src="${lyr.img}" alt=""></div>
+      <div class="lv-info">
+        <div class="lv-name">${lyr.name}</div>
+        <div class="lv-meta">${lyr.props.visible?'Visible':'Hidden'} · ${Math.round(lyr.props.opacity*100)}% opacity · R${lyr.props.rotate}°</div>
+      </div>
+      <div class="lv-acts">
+        <button class="lv-act vis-btn" title="${lyr.props.visible?'Hide':'Show'}" data-uid="${lyr.uid}">
+          ${lyr.props.visible
+            ?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>'
+            :'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>'}
+        </button>
+        <button class="lv-act del-btn" title="Delete" data-uid="${lyr.uid}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+        </button>
+      </div>`;
+    el.addEventListener('click',function(e){
+      if(e.target.closest('.lv-act'))return;
+      selectLayer(lyr.uid);
+      switchTab('Props');
+    });
+    el.querySelector('.vis-btn').addEventListener('click',function(e){
+      e.stopPropagation();
+      const l=layers.find(x=>x.uid===+this.dataset.uid);
+      if(l){l.props.visible=!l.props.visible;refreshGrid();renderLayerList();}
+    });
+    el.querySelector('.del-btn').addEventListener('click',function(e){
+      e.stopPropagation();
+      deleteLayer(+this.dataset.uid);
+    });
+    lvList.appendChild(el);
+  });
+}
 
-        if (toggleBtn) toggleBtn.addEventListener('click', () => {
-            panel.classList.contains('open') ? closePanel() : openPanel();
-        });
+function switchTab(name){
+  document.querySelectorAll('.rp-tab').forEach(t=>t.classList.toggle('on',t.dataset.tab===name));
+  document.querySelectorAll('.rp-view').forEach(v=>v.classList.toggle('on',v.id==='view'+name));
+}
 
-        overlay.addEventListener('click', closePanel);
+// ── SELECT ──
+function selectLayer(uid){
+  activeUid=uid;
+  renderLayerList();
+  refreshGrid();
+  updateProps();
+}
+function getActive(){return layers.find(l=>l.uid===activeUid)||null;}
 
-        // Mobile nav items
-        document.querySelectorAll('.mobile-nav-item').forEach(item => {
-            item.addEventListener('click', function () {
-                document.querySelectorAll('.mobile-nav-item').forEach(i => i.classList.remove('active'));
-                this.classList.add('active');
-                if (this.dataset.tab === 'props') {
-                    panel.classList.contains('open') ? closePanel() : openPanel();
-                } else {
-                    closePanel();
-                }
-            });
-        });
+// ── PROPS ──
+function updateProps(){
+  const lyr=getActive();
+  const noSel=document.getElementById('noSelMsg');
+  const pc=document.getElementById('propsContent');
+  if(!lyr){noSel.style.display='';pc.style.display='none';return;}
+  noSel.style.display='none';pc.style.display='flex';
+  document.getElementById('ppImg').src=lyr.img;
+  document.getElementById('ppName').textContent=lyr.name;
+  const p=lyr.props;
+  setSlider('slRotate','valRotate',p.rotate,'°');
+  setSlider('slScale','valScale',Math.round(Math.abs(p.scaleX)*100),'%');
+  setSlider('slOpacity','valOpacity',Math.round(p.opacity*100),'%');
+  document.getElementById('niX').value=p.offsetX;
+  document.getElementById('niY').value=p.offsetY;
+  document.getElementById('niW').value=p.width;
+  document.getElementById('niH').value=p.height;
+  document.getElementById('btnFlipH').classList.toggle('on',p.scaleX<0);
+  document.getElementById('btnFlipV').classList.toggle('on',p.scaleY<0);
+}
+function setSlider(slId,valId,val,suffix){
+  document.getElementById(slId).value=val;
+  document.getElementById(valId).textContent=val+suffix;
+}
 
-        // Touch swipe down to close panel
-        let touchStartY = 0;
-        panel.addEventListener('touchstart', e => { touchStartY = e.touches[0].clientY; }, { passive: true });
-        panel.addEventListener('touchend', e => {
-            const dy = e.changedTouches[0].clientY - touchStartY;
-            if (dy > 60) closePanel();
-        }, { passive: true });
+// ── APPLY TRANSFORM ──
+function applyTransform(imgEl,wrapEl,p){
+  const absScale=Math.abs(p.scaleX);
+  const fx=p.scaleX<0?-1:1, fy=p.scaleY<0?-1:1;
+  imgEl.style.transform=`rotate(${p.rotate}deg) scale(${fx*absScale},${fy*absScale})`;
+  imgEl.style.opacity=p.opacity;
+  imgEl.style.width=p.width+'%';
+  imgEl.style.height=p.height+'%';
+  imgEl.style.position='relative';
+  imgEl.style.left=p.offsetX+'px';
+  imgEl.style.top=p.offsetY+'px';
+  wrapEl.style.visibility=p.visible?'':'hidden';
+}
 
-        // Touch support for color picker
-        const gradField = document.getElementById('gradientField');
-        gradField.addEventListener('touchstart', e => { e.preventDefault(); movePicker(e.touches[0]); }, { passive: false });
-        gradField.addEventListener('touchmove', e => { e.preventDefault(); movePicker(e.touches[0]); }, { passive: false });
+// ── REFRESH GRID ──
+function refreshGrid(){
+  layerImgGrid.innerHTML='';
+  const n=layers.length;
+  if(n===0){layerImgGrid.className='layer-img-grid';layerPlaceholder.style.display='';return;}
+  layerPlaceholder.style.display='none';
+  const cls=n===1?'c1':n===2?'c2':n===3?'c3':n===4?'c4':'cmany';
+  layerImgGrid.className='layer-img-grid '+cls;
+  layers.forEach(lyr=>{
+    const item=document.createElement('div');
+    item.className='lg-item'+(lyr.uid===activeUid?' selected':'');
+    const num=document.createElement('div');num.className='lg-num';num.textContent='L'+(layers.indexOf(lyr)+1);
+    const img=document.createElement('img');img.src=lyr.img;img.alt=lyr.name;
+    const lbl=document.createElement('div');lbl.className='lg-lbl';lbl.textContent=lyr.name;
+    const ring=document.createElement('div');ring.className='lg-ring';
+    applyTransform(img,item,lyr.props);
+    item.append(num,img,lbl,ring);
+    item.addEventListener('click',()=>{selectLayer(lyr.uid);switchTab('Props');});
+    layerImgGrid.appendChild(item);
+  });
+}
 
-    </script>
+// ── PROP CHANGE ──
+function readAndApply(){
+  const lyr=getActive();if(!lyr)return;
+  lyr.props.rotate=+document.getElementById('slRotate').value;
+  const sc=+document.getElementById('slScale').value/100;
+  lyr.props.scaleX=lyr.props.scaleX<0?-sc:sc;
+  lyr.props.scaleY=lyr.props.scaleY<0?-sc:sc;
+  lyr.props.opacity=+document.getElementById('slOpacity').value/100;
+  lyr.props.offsetX=+document.getElementById('niX').value;
+  lyr.props.offsetY=+document.getElementById('niY').value;
+  lyr.props.width=+document.getElementById('niW').value;
+  lyr.props.height=+document.getElementById('niH').value;
+  refreshGrid();renderLayerList();
+}
+
+// sliders
+[['slRotate','valRotate','°'],['slScale','valScale','%'],['slOpacity','valOpacity','%']].forEach(([sId,vId,sfx])=>{
+  document.getElementById(sId).addEventListener('input',function(){
+    document.getElementById(vId).textContent=this.value+sfx;
+    readAndApply();
+  });
+});
+['niX','niY','niW','niH'].forEach(id=>document.getElementById(id).addEventListener('input',readAndApply));
+
+// transform buttons
+document.getElementById('btnRotL').addEventListener('click',()=>{const l=getActive();if(!l)return;l.props.rotate=(l.props.rotate-90+360)%360;updateProps();refreshGrid();toast('Rotated −90°');});
+document.getElementById('btnRotR').addEventListener('click',()=>{const l=getActive();if(!l)return;l.props.rotate=(l.props.rotate+90)%360;updateProps();refreshGrid();toast('Rotated +90°');});
+document.getElementById('btnFlipH').addEventListener('click',()=>{const l=getActive();if(!l)return;l.props.scaleX*=-1;updateProps();refreshGrid();toast('Flipped horizontally');});
+document.getElementById('btnFlipV').addEventListener('click',()=>{const l=getActive();if(!l)return;l.props.scaleY*=-1;updateProps();refreshGrid();toast('Flipped vertically');});
+document.getElementById('btnResetT').addEventListener('click',()=>{
+  const l=getActive();if(!l)return;
+  l.props={...l.props,rotate:0,scaleX:1,scaleY:1,offsetX:0,offsetY:0,width:100,height:100};
+  updateProps();refreshGrid();toast('Transform reset');
+});
+document.getElementById('replBtn').addEventListener('click',()=>{if(!getActive()){toast('Select a layer first');return;}openTmpl(true);});
+document.getElementById('delLayerBtn').addEventListener('click',()=>{if(activeUid)deleteLayer(activeUid);});
+
+function deleteLayer(uid){
+  layers=layers.filter(l=>l.uid!==uid);
+  if(activeUid===uid)activeUid=null;
+  refreshGrid();renderLayerList();updateProps();
+  if(layers.length===0)cEmpty.style.display='';
+  toast('Layer deleted');
+}
+
+// ── TEMPLATE MODAL ──
+const tmov=document.getElementById('tmov');
+const phGrid=document.getElementById('phGrid');
+const catRow=document.getElementById('catRow');
+const srchInput=document.getElementById('srchInput');
+const srchClr=document.getElementById('srchClr');
+const tmAdd=document.getElementById('tmAdd');
+
+CATS.forEach(c=>{
+  const t=document.createElement('div');t.className='ct'+(c==='All'?' on':'');t.textContent=c;
+  t.addEventListener('click',()=>{document.querySelectorAll('.ct').forEach(x=>x.classList.remove('on'));t.classList.add('on');curCat=c;renderGrid();});
+  catRow.appendChild(t);
+});
+document.querySelectorAll('.fp').forEach(p=>{
+  p.addEventListener('click',function(){document.querySelectorAll('.fp').forEach(x=>x.classList.remove('on'));this.classList.add('on');curFil=this.dataset.f;renderGrid();});
+});
+srchInput.addEventListener('input',function(){srchQ=this.value.trim().toLowerCase();srchClr.classList.toggle('on',srchQ.length>0);renderGrid();});
+srchClr.addEventListener('click',()=>{srchInput.value='';srchQ='';srchClr.classList.remove('on');srchInput.focus();renderGrid();});
+document.getElementById('noResClr').addEventListener('click',resetFilters);
+
+function resetFilters(){
+  srchInput.value='';srchQ='';srchClr.classList.remove('on');curCat='All';curFil='all';
+  document.querySelectorAll('.ct').forEach((x,i)=>x.classList.toggle('on',i===0));
+  document.querySelectorAll('.fp').forEach((x,i)=>x.classList.toggle('on',i===0));
+  renderGrid();
+}
+function getFiltered(){
+  return TEMPLATES.filter(t=>{
+    const mC=curCat==='All'||t.cat===curCat;
+    const mF=curFil==='all'||t.tags.includes(curFil);
+    const mS=!srchQ||t.name.toLowerCase().includes(srchQ)||t.cat.toLowerCase().includes(srchQ);
+    return mC&&mF&&mS;
+  });
+}
+function renderGrid(){
+  const items=getFiltered();phGrid.innerHTML='';
+  document.getElementById('gridTitle').textContent=srchQ?`"${srchInput.value}"`:curCat==='All'?'All Templates':curCat;
+  if(!items.length){
+    document.getElementById('noRes').classList.add('on');phGrid.style.display='none';document.getElementById('gridCount').textContent='';
+    document.getElementById('noResMsg').textContent=srchQ?`No match for "${srchInput.value}".`:'No templates here.';return;
+  }
+  document.getElementById('noRes').classList.remove('on');phGrid.style.display='grid';
+  document.getElementById('gridCount').textContent=items.length+' template'+(items.length!==1?'s':'');
+  items.forEach(t=>{
+    const el=document.createElement('div');
+    el.className='ph-item'+(selIds.has(t.id)?' on':'');
+    el.innerHTML=`<img src="${t.img}" alt="${t.name}" loading="lazy"><div class="ph-sel-ov"></div><div class="ph-chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div><div class="ph-lbl">${t.name}</div>`;
+    el.addEventListener('click',()=>{
+      if(replaceMode){selIds.clear();document.querySelectorAll('.ph-item.on').forEach(x=>x.classList.remove('on'));}
+      if(selIds.has(t.id)){selIds.delete(t.id);el.classList.remove('on');}else{selIds.add(t.id);el.classList.add('on');}
+      updateFooter();
+    });
+    phGrid.appendChild(el);
+  });
+}
+function updateFooter(){
+  const n=selIds.size;
+  document.getElementById('selNum').textContent=n;
+  document.getElementById('selBadge').className='sel-badge '+(n>0?'has':'empty');
+  document.getElementById('selTxt').textContent=n===0?'No images selected':`${n} image${n!==1?'s':''} selected`;
+  tmAdd.disabled=n===0;
+  const ab=document.getElementById('addBadge');
+  if(n>0){ab.textContent=n;ab.classList.add('on');}else ab.classList.remove('on');
+}
+
+tmAdd.addEventListener('click',()=>{
+  if(!layerWrap.classList.contains('vis'))buildLayer(1920,1080);
+  if(replaceMode&&activeUid){
+    const picked=TEMPLATES.find(t=>selIds.has(t.id));
+    if(picked){const l=getActive();if(l){l.img=picked.img;l.name=picked.name;}}
+  }else{
+    TEMPLATES.filter(t=>selIds.has(t.id)).forEach(t=>layers.push(mkLayer(t)));
+  }
+  refreshGrid();renderLayerList();updateProps();
+  const cnt=selIds.size;
+  closeTmpl();selIds.clear();updateFooter();cEmpty.style.display='none';
+  toast(replaceMode?'Image replaced 🔄':`${cnt} layer${cnt!==1?'s':''} added 🎉`);
+  replaceMode=false;
+});
+
+function openTmpl(repl=false){
+  replaceMode=repl;selIds.clear();updateFooter();renderGrid();
+  // update button text
+  const btn=tmAdd;btn.innerHTML='';
+  const svgAdd='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:14px;height:14px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>';
+  const svgCheck='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:14px;height:14px"><polyline points="20 6 9 17 4 12"/></svg>';
+  btn.innerHTML=repl
+    ?`${svgCheck} Replace Image`
+    :`${svgAdd} Add to Canvas <span class="badge" id="addBadge">0</span>`;
+  btn.disabled=true;
+  tmov.classList.add('show');
+}
+function closeTmpl(){tmov.classList.remove('show');}
+document.getElementById('tmX').addEventListener('click',closeTmpl);
+document.getElementById('tmCancel').addEventListener('click',closeTmpl);
+tmov.addEventListener('click',e=>{if(e.target===tmov)closeTmpl();});
+document.getElementById('sbTmpl').addEventListener('click',()=>{activeSb('sbTmpl');openTmpl();});
+document.getElementById('mSbTmpl').addEventListener('click',()=>{activeMi('mSbTmpl');openTmpl();});
+document.getElementById('lvAdd').addEventListener('click',()=>openTmpl());
+
+// ── SIZE MODAL ──
+const sizeOv=document.getElementById('sizeOv');
+function openSize(){sizeOv.classList.add('show');}
+function closeSize(){sizeOv.classList.remove('show');}
+document.getElementById('szX').addEventListener('click',closeSize);
+document.getElementById('szCancel').addEventListener('click',closeSize);
+sizeOv.addEventListener('click',e=>{if(e.target===sizeOv)closeSize();});
+document.querySelectorAll('.spc').forEach(c=>{
+  c.addEventListener('click',function(){
+    document.querySelectorAll('.spc').forEach(x=>x.classList.remove('sel'));this.classList.add('sel');
+    document.getElementById('szW').value=this.dataset.w;document.getElementById('szH').value=this.dataset.h;
+  });
+});
+['szW','szH'].forEach(id=>document.getElementById(id).addEventListener('input',()=>document.querySelectorAll('.spc').forEach(x=>x.classList.remove('sel'))));
+document.querySelectorAll('.sm-ub').forEach(b=>b.addEventListener('click',function(){document.querySelectorAll('.sm-ub').forEach(x=>x.classList.remove('active'));this.classList.add('active');}));
+document.getElementById('szApply').addEventListener('click',()=>{
+  const w=parseInt(document.getElementById('szW').value)||1920;
+  const h=parseInt(document.getElementById('szH').value)||1080;
+  const unit=document.querySelector('.sm-ub.active').dataset.unit;
+  buildLayer(w,h);toast(`Layer set to ${w}×${h} ${unit}`);closeSize();
+});
+function buildLayer(w,h){
+  const aw=canvas.clientWidth-80,ah=canvas.clientHeight-80;
+  const MW=Math.min(aw,640),MH=Math.min(ah,480);
+  const r=w/h;let lw,lh;
+  if(r>MW/MH){lw=MW;lh=Math.round(MW/r);}else{lh=MH;lw=Math.round(MH*r);}
+  lw=Math.max(lw,120);lh=Math.max(lh,80);
+  const layer=document.getElementById('cLayer');
+  layer.style.width=lw+'px';layer.style.height=lh+'px';
+  layerWrap.classList.remove('vis');layerWrap.style.animation='none';
+  requestAnimationFrame(()=>{layerWrap.style.animation='';layerWrap.classList.add('vis');});
+  cEmpty.style.display='none';
+}
+document.getElementById('sbSize').addEventListener('click',()=>{activeSb('sbSize');openSize();});
+document.getElementById('mSbSize').addEventListener('click',()=>{activeMi('mSbSize');openSize();});
+
+function activeSb(id){document.querySelectorAll('.sb-icon').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function activeMi(id){document.querySelectorAll('.mi').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');}
+document.querySelectorAll('.sb-icon').forEach(ic=>ic.addEventListener('click',function(){
+  if(this.id==='sbSize'||this.id==='sbTmpl')return;
+  document.querySelectorAll('.sb-icon').forEach(x=>x.classList.remove('active'));this.classList.add('active');
+}));
+
+const rpanel=document.getElementById('rpanel'),pov=document.getElementById('pov');
+document.getElementById('panelTog').addEventListener('click',()=>rpanel.classList.contains('open')?(rpanel.classList.remove('open'),pov.classList.remove('show')):(rpanel.classList.add('open'),pov.classList.add('show')));
+pov.addEventListener('click',()=>{rpanel.classList.remove('open');pov.classList.remove('show');});
+
+function toast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');
+  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),2600);
+}
+
+setTimeout(()=>{document.getElementById('loader').classList.add('gone');setTimeout(openSize,450);},2200);
+</script>
 </body>
-
 </html>
