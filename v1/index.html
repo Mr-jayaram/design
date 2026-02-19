@@ -329,7 +329,8 @@
             justify-content: center;
             gap: 14px;
             text-align: center;
-            pointer-events: none
+            pointer-events: all;
+            cursor: pointer
         }
 
         .ce-icon {
@@ -2792,6 +2793,14 @@
                 <rect x="3" y="11" width="8" height="10" rx="1.2" />
                 <rect x="13" y="11" width="8" height="10" rx="1.2" />
             </svg></div>
+        <div class="sb-icon" id="sbUpload" title="Upload Image">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="17 8 12 3 7 8" />
+                <line x1="12" y1="3" x2="12" y2="15" />
+            </svg>
+        </div>
+        <input type="file" id="fileInp" accept="image/*" style="display:none">
         <div class="sb-icon" title="Messages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
                 stroke-width="2">
                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
@@ -3086,6 +3095,8 @@
 
     <div class="pov" id="pov"></div>
     <div id="toast"></div>
+
+    <input type="file" id="mainUploadInp" accept="image/*" style="display:none">
 
     <!-- CROP MODAL -->
     <div id="cropOv">
@@ -4067,6 +4078,40 @@
             refreshGrid(); renderLayerList(); updateProps();
             toast('Crop reset');
         });
+
+        // ── UPLOAD SYSTEM ──
+        const sbUpload = document.getElementById('sbUpload');
+        const fileInp = document.getElementById('fileInp');
+        const canvasEmpty = document.getElementById('canvasEmpty');
+
+        function handleFileUpload(file) {
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                const newLyr = mkLayer({
+                    id: 'up-' + Date.now(),
+                    name: file.name.split('.')[0] || 'Uploaded Image',
+                    img: event.target.result
+                });
+                layers.push(newLyr);
+                activeUid = newLyr.uid;
+                refreshGrid();
+                renderLayerList();
+                updateProps();
+                switchTab('Props');
+                toast('Image uploaded! 🚀');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        sbUpload.onclick = () => fileInp.click();
+        canvasEmpty.onclick = () => fileInp.click();
+        canvasEmpty.style.cursor = 'pointer';
+
+        fileInp.onchange = e => {
+            handleFileUpload(e.target.files[0]);
+            fileInp.value = '';
+        };
     </script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
