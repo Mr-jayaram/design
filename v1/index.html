@@ -468,15 +468,17 @@
             overflow: visible;
             min-height: 0;
             min-width: 0;
-            cursor: pointer;
+            cursor: grab;
             user-select: none;
-            pointer-events: none;
-            /* Allow clicking through to underlying layers if needed, or handle in JS */
+            pointer-events: all;
         }
 
-        .lg-item.selected {
-            z-index: 10;
+        .lg-item.dragging {
+            cursor: grabbing;
+            z-index: 100 !important;
         }
+
+        /* .lg-item.selected: z-index is set dynamically by JS (500), others get their array index */
 
         /* Make internal elements clickable */
         .lg-item .lg-crop,
@@ -501,7 +503,9 @@
             object-fit: cover;
             display: block;
             transform-origin: center center;
-            transition: none
+            transition: none;
+            will-change: transform;
+            pointer-events: none;
         }
 
         .lg-item .lg-num {
@@ -2782,6 +2786,7 @@
             [...layers].reverse().forEach(lyr => {
                 const el = document.createElement('div');
                 el.className = 'lv-item' + (lyr.uid === activeUid ? ' active' : '');
+                el.dataset.uid = lyr.uid;
                 el.innerHTML = `
       <div class="lv-thumb"><img src="${lyr.img}" alt=""></div>
       <div class="lv-info">
@@ -2853,8 +2858,11 @@
         }
 
         // ── APPLY TRANSFORM ──
-        // img lives inside .lg-crop (which fills the cell); img is absolute, sized + offset + rotated inside crop
-        // Efficiently update image and handle wrapper
+        // img lives inside .lg-crop; img is absolute, sized + offset + rotated inside crop.
+        // hWrap mirrors the same position/size so handles align with the image.
+        // IMPORTANT: DO NOT set opacity on hWrap here — CSS controls visibility
+        // via .lg-item.selected .lg-h-wrap { opacity: 1 } so only the selected
+        // image shows its crop handles.
         function applyTransform(itemEl, p) {
             const imgEl = itemEl.querySelector('img');
             const hWrap = itemEl.querySelector('.lg-h-wrap');
@@ -2863,8 +2871,7 @@
             const fx = p.scaleX < 0 ? -1 : 1;
             const fy = p.scaleY < 0 ? -1 : 1;
 
-            // Only update what changed if possible, but here we batch
-            const style = `
+            const posStyle = `
                 width: ${p.width}%;
                 height: ${p.height}%;
                 left: ${p.offsetX}%;
@@ -2872,8 +2879,18 @@
                 opacity: ${p.opacity};
                 visibility: ${p.visible ? 'visible' : 'hidden'};
             `;
-            imgEl.style.cssText = style + `transform: rotate(${p.rotate}deg) scale(${fx},${fy});`;
-            if (hWrap) hWrap.style.cssText = style + `transform: rotate(${p.rotate}deg); pointer-events: none; opacity: 1;`;
+            imgEl.style.cssText = posStyle + `transform: rotate(${p.rotate}deg) scale(${fx},${fy});`;
+
+            // Sync handle wrapper position/size/rotation — but NOT opacity (CSS handles that)
+            if (hWrap) {
+                hWrap.style.width = p.width + '%';
+                hWrap.style.height = p.height + '%';
+                hWrap.style.left = p.offsetX + '%';
+                hWrap.style.top = p.offsetY + '%';
+                hWrap.style.transform = `rotate(${p.rotate}deg)`;
+                hWrap.style.visibility = p.visible ? 'visible' : 'hidden';
+                // pointer-events handled by CSS (.rh rules)
+            }
         }
 
         // ── REFRESH GRID ──
@@ -2888,10 +2905,13 @@
             layerImgGrid.className = 'layer-img-grid';
 
 
-            layers.forEach(lyr => {
+            layers.forEach((lyr, idx) => {
                 const item = document.createElement('div');
-                item.className = 'lg-item' + (lyr.uid === activeUid ? ' selected' : '');
+                const isSelected = lyr.uid === activeUid;
+                item.className = 'lg-item' + (isSelected ? ' selected' : '');
                 item.dataset.uid = lyr.uid;
+                // Each layer gets z-index by its order; selected always on top
+                item.style.zIndex = isSelected ? 500 : (idx + 1);
                 item.style.visibility = lyr.props.visible ? '' : 'hidden';
 
                 const crop = document.createElement('div');
@@ -2930,16 +2950,41 @@
 
                 item.addEventListener('mousedown', e => {
                     if (e.target.classList.contains('rh')) return;
-                    selectLayer(lyr.uid);
-                    switchTab('Props');
-                    if (e.button === 0) attachMoveDrag(e, lyr, item);
+                    if (e.button !== 0) return;
+                    e.preventDefault();
+
+                    // Activate layer WITHOUT calling selectLayer() —
+                    // selectLayer() triggers refreshGrid() which destroys the DOM
+                    // element mid-drag. Instead update state directly.
+                    if (activeUid !== lyr.uid) {
+                        activeUid = lyr.uid;
+                        // Visually update selected state without rebuilding DOM
+                        layerImgGrid.querySelectorAll('.lg-item').forEach((el, idx) => {
+                            const isNowSelected = el.dataset.uid == lyr.uid;
+                            el.classList.toggle('selected', isNowSelected);
+                            // Boost selected layer to front; restore others to their stack order
+                            el.style.zIndex = isNowSelected ? 500 : (idx + 1);
+                        });
+                        lvList.querySelectorAll('.lv-item').forEach(el => {
+                            el.classList.toggle('active', el.dataset && +el.dataset.uid === lyr.uid);
+                        });
+                        updateProps();
+                        switchTab('Props');
+                    }
+
+                    attachMoveDrag(e, lyr, item);
                 });
 
+                // Single click on item also switches to props tab
+                item.addEventListener('click', e => {
+                    if (e.target.classList.contains('rh')) return;
+                    switchTab('Props');
+                });
 
                 // Double click to reset transform
                 item.addEventListener('dblclick', () => {
-                    lyr.props.offsetX = 0; lyr.props.offsetY = 0;
-                    lyr.props.width = 100; lyr.props.height = 100;
+                    lyr.props.offsetX = 25; lyr.props.offsetY = 25;
+                    lyr.props.width = 50; lyr.props.height = 50;
                     lyr.props.rotate = 0; lyr.props.scaleX = 1; lyr.props.scaleY = 1;
                     applyTransform(item, lyr.props);
                     updateProps();
@@ -2955,12 +3000,21 @@
         let _raf = null;
 
         function attachMoveDrag(e, lyr, itemEl) {
+            e.preventDefault();
             const startX = e.clientX, startY = e.clientY;
             const origX = lyr.props.offsetX, origY = lyr.props.offsetY;
-            const rect = itemEl.parentElement.getBoundingClientRect(); // Cache parent size
+            // Cache parent rect once — getting it on every mousemove is costly
+            const parentEl = itemEl.parentElement;
+            const rect = parentEl.getBoundingClientRect();
             const p = lyr.props;
+            let moved = false;
+
+            itemEl.classList.add('dragging');
+            document.body.style.userSelect = 'none';
+            document.body.style.cursor = 'grabbing';
 
             function onMove(me) {
+                moved = true;
                 if (_raf) cancelAnimationFrame(_raf);
                 _raf = requestAnimationFrame(() => {
                     p.offsetX = origX + (me.clientX - startX) / rect.width * 100;
@@ -2969,12 +3023,18 @@
                 });
             }
             function onUp() {
-                cancelAnimationFrame(_raf);
+                if (_raf) cancelAnimationFrame(_raf);
                 document.removeEventListener('mousemove', onMove);
                 document.removeEventListener('mouseup', onUp);
-                renderLayerList();
+                itemEl.classList.remove('dragging');
+                document.body.style.userSelect = '';
+                document.body.style.cursor = '';
+                if (moved) {
+                    // Only sync sidebar after drag ends, not during
+                    renderLayerList();
+                }
             }
-            document.addEventListener('mousemove', onMove);
+            document.addEventListener('mousemove', onMove, { passive: true });
             document.addEventListener('mouseup', onUp);
         }
 
