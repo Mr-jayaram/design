@@ -3025,6 +3025,30 @@
                         <rect x="3" y="11" width="8" height="10" rx="1.2" />
                         <rect x="13" y="11" width="8" height="10" rx="1.2" />
                     </svg><span>Templates</span></div>
+                <div class="mi" id="mSbText"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.5">
+                        <polyline points="4 7 4 4 20 4 20 7" />
+                        <line x1="9" y1="20" x2="15" y2="20" />
+                        <line x1="12" y1="4" x2="12" y2="20" />
+                    </svg><span>Text</span></div>
+                <div class="mi" id="mSbUpload"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="17 8 12 3 7 8" />
+                        <line x1="12" y1="3" x2="12" y2="15" />
+                    </svg><span>Upload</span></div>
+                <div class="mi" id="mSbExport"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="7 10 12 15 17 10" />
+                        <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg><span>Save</span></div>
+                <div class="mi" id="mSbDownload"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="7 10 12 15 17 10" />
+                        <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg><span>PNG</span></div>
                 <div class="mi-sep"></div>
                 <div class="mi-av">O</div>
             </div>
@@ -4149,12 +4173,17 @@
                 item.append(crop, hWrap);
                 applyTransform(item, lyr.props);
 
+                let lastTap = 0;
                 const onStart = e => {
                     if (e.target.classList.contains('rh')) return;
                     if (e.type === 'mousedown' && e.button !== 0) return;
 
                     const isTouch = e.type === 'touchstart';
-                    if (isTouch) e.preventDefault();
+                    if (isTouch) {
+                        // We do NOT preventDefault here yet, because we want to allow 
+                        // potential single-tap behavior, but for dragging we will.
+                        // Actually, to prevent scrolling while dragging, we'll need it.
+                    }
 
                     const item = e.target.closest('.lg-item');
                     if (!item) return;
@@ -4163,8 +4192,29 @@
                     const lyr = layers.find(l => l.uid === uid);
                     if (!lyr || !lyr.props.visible) return;
 
+                    // ── MOBILE DOUBLE TAP & SELECT ──
+                    const now = Date.now();
+                    const DOUBLE_TAP_TIMEOUT = 300;
+
+                    if (isTouch) {
+                        if (now - lastTap < DOUBLE_TAP_TIMEOUT) {
+                            // Double Tap Detected
+                            selectLayer(uid);
+                            switchTab('Props');
+                            e.preventDefault();
+                        } else {
+                            // Single Tap / Potential Drag Start
+                            // If not selected, select it on first tap too for better UX
+                            if (activeUid !== uid) {
+                                selectLayer(uid);
+                            }
+                        }
+                        lastTap = now;
+                    }
+
                     // Only allow dragging if it is ALREADY the active layer
                     if (activeUid === uid) {
+                        if (isTouch) e.preventDefault();
                         attachMoveDrag(e, lyr, item);
                     }
                 };
@@ -4554,6 +4604,19 @@
         // Corner resize handles removed
         document.getElementById('sbSize').addEventListener('click', () => { activeSb('sbSize'); openSize(); });
         document.getElementById('mSbSize').addEventListener('click', () => { activeMi('mSbSize'); openSize(); });
+
+        document.getElementById('mSbText').addEventListener('click', () => {
+            activeMi('mSbText');
+            document.getElementById('sbText').click();
+        });
+        document.getElementById('mSbUpload').addEventListener('click', () => {
+            activeMi('mSbUpload');
+            document.getElementById('sbUpload').click();
+        });
+        document.getElementById('mSbExport').addEventListener('click', () => {
+            activeMi('mSbExport');
+            document.getElementById('btnExport').click();
+        });
 
         function activeSb(id) { document.querySelectorAll('.sb-icon').forEach(x => x.classList.remove('active')); document.getElementById(id).classList.add('active'); }
         function activeMi(id) { document.querySelectorAll('.mi').forEach(x => x.classList.remove('active')); document.getElementById(id).classList.add('active'); }
@@ -5240,6 +5303,7 @@
 
         document.getElementById('dlBtn').addEventListener('click', onDownload);
         if (document.getElementById('sbDlBtn')) document.getElementById('sbDlBtn').addEventListener('click', onDownload);
+        if (document.getElementById('mSbDownload')) document.getElementById('mSbDownload').addEventListener('click', onDownload);
     </script>
 </body>
 
