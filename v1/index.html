@@ -317,7 +317,66 @@
             background-size: 24px 24px;
             display: flex;
             align-items: center;
-            justify-content: center
+            justify-content: center;
+            touch-action: none;
+            scrollbar-width: thin;
+        }
+
+        /* Float Zoom Controls */
+        .zoom-ctrl {
+            position: absolute;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--white);
+            border-radius: 12px;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, .12);
+            border: 1px solid var(--border);
+            z-index: 1000;
+        }
+
+        .zc-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: none;
+            background: none;
+            color: var(--mid);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: .15s;
+        }
+
+        .zc-btn:hover {
+            background: var(--blue-l);
+            color: var(--blue);
+        }
+
+        .zc-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .zc-val {
+            min-width: 50px;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--dark);
+            user-select: none;
+        }
+
+        .zc-sep {
+            width: 1px;
+            height: 18px;
+            background: var(--border);
+            margin: 0 4px;
         }
 
         .canvas-empty {
@@ -407,13 +466,14 @@
 
         .lg-item {
             position: absolute;
-            inset: 0;
             overflow: visible;
             min-height: 0;
             min-width: 0;
             cursor: grab;
             user-select: none;
             pointer-events: all;
+            transform-origin: center center;
+            will-change: transform;
         }
 
         .lg-item.dragging {
@@ -437,7 +497,8 @@
             /* Clip images to the layer boundary */
         }
 
-        .lg-item img {
+        .lg-item img,
+        .lg-item .lg-text-node {
             position: absolute;
             top: 0;
             left: 0;
@@ -445,9 +506,7 @@
             height: 100%;
             object-fit: cover;
             display: block;
-            transform-origin: center center;
             transition: none;
-            will-change: transform;
             pointer-events: none;
         }
 
@@ -476,6 +535,7 @@
 
         .lg-h-wrap {
             position: absolute;
+            inset: -4px;
             pointer-events: none;
             z-index: 15;
             opacity: 0;
@@ -551,6 +611,45 @@
             top: 100%;
             left: 100%;
             cursor: se-resize
+        }
+
+        .rh.rot {
+            top: -28px;
+            left: 50%;
+            width: 14px;
+            height: 14px;
+            background: var(--blue);
+            border: 2px solid #fff;
+            border-radius: 50%;
+            cursor: crosshair;
+            z-index: 20;
+        }
+
+        .rh.rot::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            width: 2px;
+            height: 16px;
+            background: var(--blue);
+            transform: translateX(-50%);
+            pointer-events: none;
+        }
+
+        .text-mode-active #canvas {
+            cursor: text !important;
+        }
+
+        .lg-text-node {
+            outline: none;
+            cursor: text;
+        }
+
+        .lg-text-node:focus {
+            background: rgba(var(--blue-rgb), 0.05);
+            box-shadow: 0 0 0 2px var(--blue);
+            border-radius: 4px;
         }
 
         .layer-placeholder {
@@ -2448,28 +2547,46 @@
             }
         }
 
+        /* toast notifications - Premium Bottom Right */
         #toast {
             position: fixed;
             bottom: 24px;
-            left: 50%;
-            transform: translateX(-50%) translateY(8px);
+            right: 24px;
             background: var(--dark);
             color: #fff;
-            padding: 10px 20px;
+            padding: 12px 20px;
             border-radius: 12px;
             font-size: 13px;
-            font-weight: 500;
-            z-index: 99999;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, .2);
+            transform: translateY(100px);
             opacity: 0;
-            transition: opacity .22s, transform .22s;
-            pointer-events: none;
-            white-space: nowrap;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, .25)
+            transition: all .4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 9999;
+            border-left: 4px solid var(--blue);
         }
 
         #toast.on {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0)
+            transform: translateY(0);
+            opacity: 1
+        }
+
+        #toast.success {
+            background: #10b981;
+            border-left: none;
+        }
+
+        #toast.error {
+            background: #ef4444;
+            border-left: none;
+        }
+
+        #toast.info {
+            background: var(--blue);
+            border-left: none;
         }
 
         .pov {
@@ -2800,6 +2917,13 @@
                 <line x1="12" y1="3" x2="12" y2="15" />
             </svg>
         </div>
+        <div class="sb-icon" id="sbText" title="Add Text">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="4 7 4 4 20 4 20 7" />
+                <line x1="9" y1="20" x2="15" y2="20" />
+                <line x1="12" y1="4" x2="12" y2="20" />
+            </svg>
+        </div>
         <input type="file" id="fileInp" accept="image/*" style="display:none">
         <div class="sb-icon" title="Messages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
                 stroke-width="2">
@@ -2816,13 +2940,29 @@
                     d="M19.07 4.93l-1.41 1.41M4.93 19.07l-1.41 1.41M19.07 19.07l-1.41-1.41M4.93 4.93l1.41 1.41M21 12h-2M5 12H3M12 21v-2M12 5V3" />
             </svg></div>
         <div class="sb-div"></div>
-        <div class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" />
-            </svg></div>
-        <div class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polygon
-                    points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-            </svg></div>
+        <div class="sb-icon" id="btnExport" title="Export Project (JSON)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+        </div>
+        <div class="sb-icon" id="btnImport" title="Import Project (JSON)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="17 8 12 3 7 8" />
+                <line x1="12" y1="3" x2="12" y2="15" />
+            </svg>
+        </div>
+        <input type="file" id="importInp" accept="application/json" style="display:none">
+
+        <div class="sb-icon" id="sbDlBtn" title="Export Image (PNG)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+        </div>
         <div class="sb-btm">
             <div class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="12" cy="12" r="10" />
@@ -2893,24 +3033,55 @@
         <div class="content">
             <div class="canvas" id="canvas">
                 <div class="canvas-empty" id="canvasEmpty">
-                    <div class="ce-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <rect x="3" y="3" width="18" height="18" rx="2" />
-                            <line x1="3" y1="9" x2="21" y2="9" />
-                            <line x1="9" y1="21" x2="9" y2="9" />
-                        </svg></div>
-                    <h3>Canvas is empty</h3>
-                    <p>Click <strong>Layer Size</strong> to begin, then add <strong>Templates</strong></p>
+                    <div class="ce-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                            <circle cx="9" cy="9" r="2" />
+                            <path d="M21 15l-5-5L5 21" />
+                        </svg>
+                    </div>
+                    <h3>Welcome to the Editor</h3>
+                    <p>Select a size or <strong>Upload an image</strong> to start designing your masterpiece</p>
                 </div>
+
+                <!-- Zoom Controls -->
+                <div class="zoom-ctrl">
+                    <button class="zc-btn" id="zoomOut" title="Zoom Out">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                        </svg>
+                    </button>
+                    <div class="zc-val" id="zoomVal">100%</div>
+                    <button class="zc-btn" id="zoomIn" title="Zoom In">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <line x1="12" y1="5" x2="12" y2="19" />
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                        </svg>
+                    </button>
+                    <div class="zc-sep"></div>
+                    <button class="zc-btn" id="zoomFit" title="Fit to Screen">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+                        </svg>
+                    </button>
+                    <div class="zc-sep"></div>
+                    <button class="zc-btn" id="canvasRotate" title="Swap Orientation">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M23 4v6h-6M1 20v-6h6M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L1 10" />
+                        </svg>
+                    </button>
+                </div>
+
                 <div class="layer-wrap" id="layerWrap">
                     <div class="c-layer" id="cLayer">
                         <div class="layer-img-grid" id="layerImgGrid"></div>
                         <div class="layer-placeholder" id="layerPlaceholder">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <rect x="3" y="3" width="18" height="18" rx="2" />
                                 <circle cx="8.5" cy="8.5" r="1.5" />
                                 <polyline points="21 15 16 10 5 21" />
                             </svg>
-                            <p>Click <strong>Templates</strong> to add images here</p>
+                            <p>No elements on canvas. Add a template or upload an image to begin.</p>
                         </div>
                         <div class="l-sel"></div>
                     </div>
@@ -2920,6 +3091,12 @@
             <!-- RIGHT PANEL -->
             <aside class="rpanel" id="rpanel">
                 <div class="rp-tabs">
+                    <div class="rp-tab" data-tab="Pages">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" />
+                            <path d="M7 7h10M7 12h10M7 17h10" />
+                        </svg>Pages
+                    </div>
                     <div class="rp-tab on" data-tab="Layers">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <rect x="2" y="7" width="20" height="14" rx="2" />
@@ -2932,6 +3109,28 @@
                             <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
                         </svg>Properties
                     </div>
+                </div>
+
+                <!-- PAGES VIEW -->
+                <div class="rp-view" id="viewPages">
+                    <div class="lv-hdr">
+                        <div class="lv-title">Project Pages</div>
+                        <div style="display:flex; gap:5px;">
+                            <button class="lv-add" id="btnSlideshow" title="Play Slideshow"
+                                style="background:var(--blue-l); color:var(--blue);">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                    <polygon points="5 3 19 12 5 21 5 3" />
+                                </svg>
+                            </button>
+                            <button class="lv-add" id="pgAdd" title="Create New Page">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                    <line x1="12" y1="5" x2="12" y2="19" />
+                                    <line x1="5" y1="12" x2="19" y2="12" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="lv-list" id="pgList"></div>
                 </div>
 
                 <!-- LAYERS VIEW -->
@@ -2966,20 +3165,48 @@
                         <p>Select a layer from the <strong>Layers</strong> tab to edit its properties</p>
                     </div>
                     <div id="propsContent" style="display:none;flex-direction:column;flex:1;overflow-y:auto">
-                        <!-- Preview -->
-                        <div class="ps">
-                            <div class="img-prev">
-                                <img id="ppImg" src="" alt="">
-                                <div class="img-prev-ov"><span class="img-prev-name" id="ppName"></span></div>
+                        <div id="imgOnlyProps">
+                            <!-- Preview -->
+                            <div class="ps">
+                                <div class="img-prev">
+                                    <img id="ppImg" src="" alt="">
+                                    <div class="img-prev-ov"><span class="img-prev-name" id="ppName"></span></div>
+                                </div>
+                                <button class="repl-btn" id="replBtn">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                        <polyline points="17 8 12 3 7 8" />
+                                        <line x1="12" y1="3" x2="12" y2="15" />
+                                    </svg>
+                                    Replace Image
+                                </button>
                             </div>
-                            <button class="repl-btn" id="replBtn">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                                    <polyline points="17 8 12 3 7 8" />
-                                    <line x1="12" y1="3" x2="12" y2="15" />
-                                </svg>
-                                Replace Image
-                            </button>
+
+                            <!-- Crop -->
+                            <div class="ps">
+                                <div class="ps-lbl">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M6 2v14a2 2 0 0 0 2 2h14" />
+                                        <path d="M18 22V8a2 2 0 0 0-2-2H2" />
+                                    </svg>Crop Image
+                                </div>
+                                <div class="crop-btn-row">
+                                    <button class="crop-open-btn" id="cropOpenBtn">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M6 2v14a2 2 0 0 0 2 2h14" />
+                                            <path d="M18 22V8a2 2 0 0 0-2-2H2" />
+                                        </svg>
+                                        Crop Image
+                                    </button>
+                                    <button class="crop-reset-btn" id="cropResetBtn" title="Reset crop">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                                            <path d="M3 3v5h5" />
+                                        </svg>
+                                        Reset
+                                    </button>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Transform -->
@@ -3051,31 +3278,120 @@
                             </div>
                         </div>
 
-                        <!-- Crop -->
+
+
+                        <!-- Fit to Screen -->
                         <div class="ps">
                             <div class="ps-lbl">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M6 2v14a2 2 0 0 0 2 2h14" />
-                                    <path d="M18 22V8a2 2 0 0 0-2-2H2" />
-                                </svg>Crop Image
+                                    <path
+                                        d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3" />
+                                </svg>Layout Actions
                             </div>
-                            <div class="crop-btn-row">
-                                <button class="crop-open-btn" id="cropOpenBtn">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M6 2v14a2 2 0 0 0 2 2h14" />
-                                        <path d="M18 22V8a2 2 0 0 0-2-2H2" />
-                                    </svg>
-                                    Crop Image
-                                </button>
-                                <button class="crop-reset-btn" id="cropResetBtn" title="Reset crop">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
-                                        <path d="M3 3v5h5" />
-                                    </svg>
-                                    Reset
-                                </button>
+                            <button class="tc-btn tc-full" id="btnFitScreen">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+                                </svg>
+                                Fit to Screen
+                            </button>
+                        </div>
+
+                        <!-- Text Properties (Hidden for images) -->
+                        <div id="textOnlyProps" style="display:none">
+                            <div class="ps">
+                                <div class="ps-lbl"
+                                    style="display:flex; justify-content:space-between; align-items:center;">
+                                    Text Content
+                                    <div style="display:flex; gap:5px; align-items:center;">
+                                        <select id="voiceLang"
+                                            style="font-size:10px; padding:2px; border-radius:4px; border:1px solid var(--border); background:var(--bg); cursor:pointer;">
+                                            <option value="en-US">English</option>
+                                            <option value="ta-IN">Tamil (தமிழ்)</option>
+                                        </select>
+                                        <button id="btnVoice" title="Voice to Text"
+                                            style="background:var(--blue); border:none; border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; color:#fff; cursor:pointer; transition:all 0.2s;">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2.5" style="width:14px;height:14px;">
+                                                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+                                                <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                                                <line x1="12" y1="19" x2="12" y2="23" />
+                                                <line x1="8" y1="23" x2="16" y2="23" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                <textarea id="txtContent" class="t-area" placeholder="Type something..."
+                                    style="width:100%;min-height:60px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px;font-size:12px;color:var(--dark);resize:none;margin-top:8px;outline:none;font-family:inherit;"></textarea>
+                            </div>
+                            <div class="ps">
+                                <div class="ps-lbl">Typography</div>
+                                <div class="sl-row">
+                                    <span class="sl-lbl">Font</span>
+                                    <select class="sl" id="txtFont"
+                                        style="padding: 2px 5px; height: 28px; font-weight: 600;">
+                                        <option value="inherit">Default</option>
+                                        <option value="'Inter', sans-serif">Inter</option>
+                                        <option value="'Playfair Display', serif">Playfair</option>
+                                        <option value="'Roboto Mono', monospace">Mono</option>
+                                        <option value="'Outfit', sans-serif">Outfit</option>
+                                        <option value="cursive">Cursive</option>
+                                    </select>
+                                </div>
+                                <div class="sl-row" style="margin-top:8px">
+                                    <span class="sl-lbl">Size</span>
+                                    <input type="range" class="sl" id="txtSize" min="8" max="200" value="24">
+                                    <span class="sl-val" id="valTxtSize">24px</span>
+                                </div>
+                                <div class="sl-row" style="margin-top:8px">
+                                    <span class="sl-lbl">Color</span>
+                                    <input type="color" id="txtColor" value="#000000"
+                                        style="width:100%;height:30px;border:none;background:none;cursor:pointer;">
+                                </div>
+                                <div class="tc-grid"
+                                    style="margin-top:12px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                                    <button class="tc-btn" id="btnBold"><b>B</b> Bold</button>
+                                    <button class="tc-btn" id="btnItalic"><i>I</i> Italic</button>
+                                </div>
+                                <div class="ps-lbl" style="margin-top:16px">Alignment</div>
+                                <div class="tc-grid"
+                                    style="margin-top:8px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+                                    <button class="tc-btn" id="btnAlignL" title="Left"><svg viewBox="0 0 24 24"
+                                            fill="none" stroke="currentColor" stroke-width="2" style="width:14px">
+                                            <line x1="17" y1="10" x2="3" y2="10" />
+                                            <line x1="21" y1="6" x2="3" y2="6" />
+                                            <line x1="21" y1="14" x2="3" y2="14" />
+                                            <line x1="17" y1="18" x2="3" y2="18" />
+                                        </svg></button>
+                                    <button class="tc-btn" id="btnAlignC" title="Center"><svg viewBox="0 0 24 24"
+                                            fill="none" stroke="currentColor" stroke-width="2" style="width:14px">
+                                            <line x1="18" y1="10" x2="6" y2="10" />
+                                            <line x1="21" y1="6" x2="3" y2="6" />
+                                            <line x1="21" y1="14" x2="3" y2="14" />
+                                            <line x1="18" y1="18" x2="6" y2="18" />
+                                        </svg></button>
+                                    <button class="tc-btn" id="btnAlignR" title="Right"><svg viewBox="0 0 24 24"
+                                            fill="none" stroke="currentColor" stroke-width="2" style="width:14px">
+                                            <line x1="21" y1="10" x2="7" y2="10" />
+                                            <line x1="21" y1="6" x2="3" y2="6" />
+                                            <line x1="21" y1="14" x2="3" y2="14" />
+                                            <line x1="21" y1="18" x2="7" y2="18" />
+                                        </svg></button>
+                                </div>
+                                <div class="ps-lbl" style="margin-top:16px">Spacing</div>
+                                <div class="sl-row">
+                                    <span class="sl-lbl">Line</span>
+                                    <input type="range" class="sl" id="txtHeight" min="0.5" max="3" step="0.1"
+                                        value="1.2">
+                                    <span class="sl-val" id="valTxtHeight">1.2</span>
+                                </div>
+                                <div class="sl-row" style="margin-top:8px">
+                                    <span class="sl-lbl">Letter</span>
+                                    <input type="range" class="sl" id="txtSpacing" min="-5" max="20" step="1" value="0">
+                                    <span class="sl-val" id="valTxtSpacing">0px</span>
+                                </div>
                             </div>
                         </div>
+
                         <!-- Delete -->
                         <div class="del-zone">
                             <button class="del-btn-full" id="delLayerBtn">
@@ -3087,9 +3403,42 @@
                                 Delete This Layer
                             </button>
                         </div>
+
                     </div>
                 </div>
             </aside>
+        </div>
+    </div>
+
+    <!-- SLIDESHOW OVERLAY -->
+    <div id="slideOv"
+        style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:10000; flex-direction:column; align-items:center; justify-content:center; color:#fff; overflow:hidden;">
+        <div style="position:absolute; top:20px; right:20px; display:flex; gap:15px; align-items:center;">
+            <div id="slideCounter" style="font-size:14px; font-weight:600; opacity:0.8;">Page 1 / 1</div>
+            <button id="slideExit" style="background:none; border:none; color:#fff; cursor:pointer;"><svg
+                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    style="width:24px;height:24px;">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg></button>
+        </div>
+        <div id="slideContent"
+            style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; transition: transform 0.3s ease;">
+        </div>
+        <div
+            style="position:absolute; bottom:40px; display:flex; gap:20px; align-items:center; background:rgba(255,255,255,0.1); padding:10px 25px; border-radius:50px; backdrop-filter:blur(10px);">
+            <button id="slidePrev" style="background:none; border:none; color:#fff; cursor:pointer;"><svg
+                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    style="width:20px;height:20px;">
+                    <polyline points="15 18 9 12 15 6" />
+                </svg></button>
+            <button id="slideAuto"
+                style="background:var(--blue); border:none; color:#fff; padding:5px 15px; border-radius:20px; font-size:12px; font-weight:700; cursor:pointer;">AutoPlay</button>
+            <button id="slideNext" style="background:none; border:none; color:#fff; cursor:pointer;"><svg
+                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    style="width:20px;height:20px;">
+                    <polyline points="9 18 15 12 9 6" />
+                </svg></button>
         </div>
     </div>
 
@@ -3240,12 +3589,37 @@
         // ── STATE ──
         let selIds = new Set(), curCat = 'All', curFil = 'all', srchQ = '';
         let layers = [], activeUid = null, uidCtr = 0, replaceMode = false;
+        let pages = [], activePageId = null, pageCtr = 0;
+
+        let isTextMode = false;
 
         function mkLayer(t) {
-            // Default to half size and centered
             return {
-                uid: ++uidCtr, id: t.id, img: t.img, name: t.name,
-                props: { rotate: 0, scaleX: 1, scaleY: 1, opacity: 1, offsetX: 25, offsetY: 25, width: 50, height: 50, visible: true }
+                uid: ++uidCtr,
+                id: t.id || 'lyr-' + Date.now(),
+                type: t.type || 'image',
+                img: t.img || '',
+                text: t.text || 'Sample Text',
+                name: t.name || (t.type === 'text' ? 'Text' : 'Layer'),
+                props: {
+                    rotate: 0,
+                    scaleX: 1,
+                    scaleY: 1,
+                    opacity: 1,
+                    offsetX: 25,
+                    offsetY: 25,
+                    width: 50,
+                    height: 50,
+                    visible: true,
+                    fontSize: 24,
+                    color: '#000000',
+                    bold: false,
+                    italic: false,
+                    fontFamily: 'inherit',
+                    textAlign: 'center',
+                    lineHeight: 1.2,
+                    letterSpacing: 0
+                }
             };
         }
 
@@ -3283,6 +3657,12 @@
         <div class="lv-meta">${lyr.props.visible ? 'Visible' : 'Hidden'} · ${Math.round(lyr.props.opacity * 100)}% opacity · R${lyr.props.rotate}°</div>
       </div>
       <div class="lv-acts">
+        <button class="lv-act move-up-btn" title="Move Up" data-uid="${lyr.uid}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
+        </button>
+        <button class="lv-act move-down-btn" title="Move Down" data-uid="${lyr.uid}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
         <button class="lv-act vis-btn" title="${lyr.props.visible ? 'Hide' : 'Show'}" data-uid="${lyr.uid}">
           ${lyr.props.visible
                         ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>'
@@ -3301,6 +3681,14 @@
                     e.stopPropagation();
                     const l = layers.find(x => x.uid === +this.dataset.uid);
                     if (l) { l.props.visible = !l.props.visible; refreshGrid(); renderLayerList(); }
+                });
+                el.querySelector('.move-up-btn').addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    moveLayer(+this.dataset.uid, 1);
+                });
+                el.querySelector('.move-down-btn').addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    moveLayer(+this.dataset.uid, -1);
                 });
                 el.querySelector('.del-btn').addEventListener('click', function (e) {
                     e.stopPropagation();
@@ -3324,6 +3712,271 @@
         }
         function getActive() { return layers.find(l => l.uid === activeUid) || null; }
 
+        // ── PAGES SYSTEM ──
+        function mkPage() {
+            const cl = document.getElementById('cLayer');
+            // Default to current canvas size if it exists, else 500x500
+            const w = cl ? cl.offsetWidth : 500;
+            const h = cl ? cl.offsetHeight : 500;
+
+            return {
+                id: ++pageCtr,
+                name: 'Page ' + pageCtr,
+                layers: [],
+                canvas: {
+                    width: w,
+                    height: h
+                }
+            };
+        }
+
+        function renderPageList() {
+            const pgList = document.getElementById('pgList');
+            pgList.innerHTML = '';
+            pages.forEach((pg, idx) => {
+                const el = document.createElement('div');
+                el.className = 'lv-item' + (pg.id === activePageId ? ' active' : '');
+                el.innerHTML = `
+                    <div class="lv-thumb" style="background:#f0f0f0; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:10px;">P${idx + 1}</div>
+                    <div class="lv-info">
+                        <div class="lv-name" contenteditable="true" data-id="${pg.id}" style="outline:none; padding: 2px 4px; border-radius:4px; transition: background 0.2s;">${pg.name}</div>
+                        <div class="lv-meta">${pg.layers.length} Layers · ${pg.canvas.width}x${pg.canvas.height}</div>
+                    </div>
+                    <div class="lv-acts">
+                        <button class="lv-act pg-dup-btn" title="Duplicate Page" data-id="${pg.id}">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/><rect x="8" y="8" width="13" height="13" rx="2"/></svg>
+                        </button>
+                        <button class="lv-act pg-del-btn" title="Delete Page" data-id="${pg.id}">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+                        </button>
+                    </div>
+                `;
+                el.onclick = (e) => {
+                    if (e.target.closest('.lv-act') || e.target.classList.contains('lv-name')) return;
+                    selectPage(pg.id);
+                };
+
+                const nameEl = el.querySelector('.lv-name');
+                nameEl.onblur = () => {
+                    pg.name = nameEl.textContent;
+                    toast('Page renamed');
+                };
+                nameEl.onkeydown = (e) => { if (e.key === 'Enter') { e.preventDefault(); nameEl.blur(); } };
+
+                el.querySelector('.pg-dup-btn').onclick = (e) => {
+                    e.stopPropagation();
+                    duplicatePage(pg.id);
+                };
+
+                el.querySelector('.pg-del-btn').onclick = (e) => {
+                    e.stopPropagation();
+                    deletePage(pg.id);
+                };
+                pgList.appendChild(el);
+            });
+        }
+
+        function selectPage(id) {
+            if (activePageId === id) return;
+            // Save current to previous active
+            if (activePageId !== null) {
+                const prev = pages.find(p => p.id === activePageId);
+                if (prev) {
+                    prev.layers = JSON.parse(JSON.stringify(layers));
+                    const cl = document.getElementById('cLayer');
+                    prev.canvas = { width: cl.offsetWidth, height: cl.offsetHeight };
+                }
+            }
+
+            activePageId = id;
+            const cur = pages.find(p => p.id === id);
+            layers = JSON.parse(JSON.stringify(cur.layers));
+            buildLayer(cur.canvas.width, cur.canvas.height);
+            activeUid = null;
+            refreshGrid();
+            renderLayerList();
+            renderPageList();
+            updateProps();
+            toast('Switched to ' + cur.name);
+        }
+
+        function duplicatePage(id) {
+            const pg = pages.find(p => p.id === id);
+            if (!pg) return;
+
+            // Sync current if it's the active one
+            if (activePageId === id) {
+                pg.layers = JSON.parse(JSON.stringify(layers));
+            }
+
+            const newPg = JSON.parse(JSON.stringify(pg));
+            newPg.id = ++pageCtr;
+            newPg.name = pg.name + ' (Copy)';
+
+            const idx = pages.findIndex(p => p.id === id);
+            pages.splice(idx + 1, 0, newPg);
+
+            selectPage(newPg.id);
+            toast('Page duplicated 📑');
+        }
+
+        function deletePage(id) {
+            if (pages.length <= 1) return toast('At least one page required!', 'error');
+            const idx = pages.findIndex(p => p.id === id);
+            pages.splice(idx, 1);
+            if (activePageId === id) {
+                activePageId = null;
+                selectPage(pages[0].id);
+            } else {
+                renderPageList();
+            }
+            toast('Page deleted');
+        }
+
+        // ── SLIDESHOW LOGIC ──
+        let slideIdx = 0;
+        let slideInterval = null;
+
+        function showSlide(idx) {
+            slideIdx = (idx + pages.length) % pages.length;
+            const pg = pages[slideIdx];
+            const slideContent = document.getElementById('slideContent');
+            const slideCounter = document.getElementById('slideCounter');
+
+            slideCounter.textContent = `Page ${slideIdx + 1} / ${pages.length}`;
+
+            // Create New Slide with Fade-In
+            const wrap = document.createElement('div');
+            wrap.className = 'slide-item';
+            wrap.style.cssText = `
+                width: ${pg.canvas.width}px;
+                height: ${pg.canvas.height}px;
+                background: #fff;
+                position: absolute;
+                transform: translate(-50%, -50%) scale(${Math.min(window.innerWidth * 0.8 / pg.canvas.width, window.innerHeight * 0.8 / pg.canvas.height)});
+                left: 50%;
+                top: 50%;
+                box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+                border-radius: 4px;
+                overflow: hidden;
+                opacity: 0;
+                transition: opacity 0.5s ease-in-out;
+            `;
+
+            pg.layers.forEach(lyr => {
+                const el = document.createElement('div');
+                el.style.cssText = `
+                    position: absolute;
+                    width: ${lyr.props.width}%;
+                    height: ${lyr.props.height}%;
+                    left: ${lyr.props.offsetX}%;
+                    top: ${lyr.props.offsetY}%;
+                    transform: rotate(${lyr.props.rotate}deg);
+                    opacity: ${lyr.props.opacity};
+                    overflow: hidden;
+                `;
+
+                if (lyr.type === 'text') {
+                    const txt = document.createElement('div');
+                    txt.style.cssText = `
+                        width: 100%; height: 100%; display: flex; 
+                        align-items: center; justify-content: center;
+                        font-family: ${lyr.props.fontFamily};
+                        font-size: ${lyr.props.fontSize}px;
+                        color: ${lyr.props.color};
+                        font-weight: ${lyr.props.bold ? 'bold' : 'normal'};
+                        font-style: ${lyr.props.italic ? 'italic' : 'normal'};
+                        text-align: ${lyr.props.textAlign};
+                        line-height: ${lyr.props.lineHeight};
+                        letter-spacing: ${lyr.props.letterSpacing}px;
+                    `;
+                    txt.textContent = lyr.text;
+                    el.appendChild(txt);
+                } else {
+                    const img = document.createElement('img');
+                    img.src = lyr.img;
+                    img.style.cssText = 'width: 100%; height: 100%; object-fit: cover;';
+                    el.appendChild(img);
+                }
+                wrap.appendChild(el);
+            });
+
+            // Remove old slides and add new one
+            const oldSlide = slideContent.querySelector('.slide-item');
+            if (oldSlide) {
+                oldSlide.style.opacity = '0';
+                setTimeout(() => oldSlide.remove(), 500);
+            }
+
+            slideContent.appendChild(wrap);
+            // Trigger reflow for transition
+            wrap.offsetHeight;
+            wrap.style.opacity = '1';
+        }
+
+        document.getElementById('btnSlideshow').onclick = () => {
+            if (pages.length === 0) return toast('No pages to show!', 'error');
+
+            // Save current page state first
+            if (activePageId !== null) {
+                const prev = pages.find(p => p.id === activePageId);
+                if (prev) prev.layers = JSON.parse(JSON.stringify(layers));
+            }
+
+            document.getElementById('slideOv').style.display = 'flex';
+            showSlide(0);
+        };
+
+        document.getElementById('slideExit').onclick = () => {
+            document.getElementById('slideOv').style.display = 'none';
+            clearInterval(slideInterval);
+            slideInterval = null;
+        };
+
+        document.getElementById('slideNext').onclick = () => showSlide(slideIdx + 1);
+        document.getElementById('slidePrev').onclick = () => showSlide(slideIdx - 1);
+
+        document.getElementById('slideAuto').onclick = function () {
+            if (slideInterval) {
+                clearInterval(slideInterval);
+                slideInterval = null;
+                this.textContent = 'AutoPlay';
+                this.style.background = 'var(--blue)';
+            } else {
+                slideInterval = setInterval(() => showSlide(slideIdx + 1), 3000);
+                this.textContent = 'Stop';
+                this.style.background = '#ff4b2b';
+            }
+        };
+
+        document.getElementById('pgAdd').onclick = () => {
+            const p = mkPage();
+            pages.push(p);
+            selectPage(p.id);
+            renderPageList();
+            toast('New page created! ✨');
+        };
+
+        // Initialize first page
+        const firstPage = mkPage();
+        pages.push(firstPage);
+        activePageId = firstPage.id;
+        renderPageList();
+
+
+        function moveLayer(uid, delta) {
+            const idx = layers.findIndex(l => l.uid === uid);
+            if (idx === -1) return;
+            const newIdx = idx + delta;
+            if (newIdx < 0 || newIdx >= layers.length) return;
+            const temp = layers[idx];
+            layers.splice(idx, 1);
+            layers.splice(newIdx, 0, temp);
+            refreshGrid();
+            renderLayerList();
+            toast('Layer stack updated ↕️');
+        }
+
         // ── PROPS ──
         function updateProps() {
             const lyr = getActive();
@@ -3331,15 +3984,44 @@
             const pc = document.getElementById('propsContent');
             if (!lyr) { noSel.style.display = ''; pc.style.display = 'none'; return; }
             noSel.style.display = 'none'; pc.style.display = 'flex';
-            document.getElementById('ppImg').src = lyr.img;
+            document.getElementById('ppImg').src = lyr.type === 'text' ? 'https://via.placeholder.com/40x40?text=T' : lyr.img;
             document.getElementById('ppName').textContent = lyr.name;
             const p = lyr.props;
             setSlider('slRotate', 'valRotate', p.rotate, '°');
-            const avgScale = Math.min(200, Math.max(20, Math.round((p.width + p.height) / 2)));
+            const avgScale = Math.min(200, Math.max(5, Math.round((p.width + p.height) / 2)));
             setSlider('slScale', 'valScale', avgScale, '%');
             setSlider('slOpacity', 'valOpacity', Math.round(p.opacity * 100), '%');
             document.getElementById('btnFlipH').classList.toggle('on', p.scaleX < 0);
             document.getElementById('btnFlipV').classList.toggle('on', p.scaleY < 0);
+
+            // Contextual Toggle
+            const txtSec = document.getElementById('textOnlyProps');
+            const imgSec = document.getElementById('imgOnlyProps');
+
+            if (lyr.type === 'text') {
+                txtSec.style.display = 'block';
+                imgSec.style.display = 'none';
+
+                document.getElementById('txtContent').value = lyr.text;
+                document.getElementById('txtFont').value = p.fontFamily;
+                setSlider('txtSize', 'valTxtSize', p.fontSize, 'px');
+                document.getElementById('txtColor').value = p.color;
+                document.getElementById('btnBold').classList.toggle('on', p.bold);
+                document.getElementById('btnItalic').classList.toggle('on', p.italic);
+
+                // Alignment toggles
+                ['L', 'C', 'R'].forEach(dir => {
+                    const btn = document.getElementById('btnAlign' + dir);
+                    const tag = dir === 'L' ? 'left' : dir === 'C' ? 'center' : 'right';
+                    btn.classList.toggle('on', p.textAlign === tag);
+                });
+
+                setSlider('txtHeight', 'valTxtHeight', p.lineHeight, '');
+                setSlider('txtSpacing', 'valTxtSpacing', p.letterSpacing, 'px');
+            } else {
+                txtSec.style.display = 'none';
+                imgSec.style.display = 'block';
+            }
         }
         function setSlider(slId, valId, val, suffix) {
             document.getElementById(slId).value = val;
@@ -3353,32 +4035,27 @@
         // via .lg-item.selected .lg-h-wrap { opacity: 1 } so only the selected
         // image shows its crop handles.
         function applyTransform(itemEl, p) {
-            const imgEl = itemEl.querySelector('img');
+            const contentEl = itemEl.querySelector('img, .lg-text-node');
             const hWrap = itemEl.querySelector('.lg-h-wrap');
-            if (!imgEl) return;
+            if (!contentEl) return;
 
             const fx = p.scaleX < 0 ? -1 : 1;
             const fy = p.scaleY < 0 ? -1 : 1;
 
-            const posStyle = `
-                width: ${p.width}%;
-                height: ${p.height}%;
-                left: ${p.offsetX}%;
-                top: ${p.offsetY}%;
-                opacity: ${p.opacity};
-                visibility: ${p.visible ? 'visible' : 'hidden'};
-            `;
-            imgEl.style.cssText = posStyle + `transform: rotate(${p.rotate}deg) scale(${fx},${fy});`;
+            // Apply transform to the LAYER itself!
+            Object.assign(itemEl.style, {
+                width: p.width + '%',
+                height: p.height + '%',
+                left: p.offsetX + '%',
+                top: p.offsetY + '%',
+                opacity: p.opacity,
+                visibility: p.visible ? 'visible' : 'hidden',
+                transform: `rotate(${p.rotate}deg) scale(${fx},${fy})`
+            });
 
-            // Sync handle wrapper position/size/rotation — but NOT opacity (CSS handles that)
+            // Handles match the item exactly because inset:-4px or inset:0
             if (hWrap) {
-                hWrap.style.width = p.width + '%';
-                hWrap.style.height = p.height + '%';
-                hWrap.style.left = p.offsetX + '%';
-                hWrap.style.top = p.offsetY + '%';
-                hWrap.style.transform = `rotate(${p.rotate}deg)`;
                 hWrap.style.visibility = p.visible ? 'visible' : 'hidden';
-                // pointer-events handled by CSS (.rh rules)
             }
         }
 
@@ -3399,15 +4076,61 @@
                 const isSelected = lyr.uid === activeUid;
                 item.className = 'lg-item' + (isSelected ? ' selected' : '');
                 item.dataset.uid = lyr.uid;
-                // Each layer gets z-index by its order; selected always on top
-                item.style.zIndex = isSelected ? 500 : (idx + 1);
+
+                // --- STRICT STACKING LOGIC ---
+                // Base: 1 - 500
+                // Selected Image: 1000
+                // Text Band: 10000+
+                // Selected Text: 15000
+                let zi = idx + 1;
+                if (lyr.type === 'text') {
+                    zi += 10000;
+                    if (isSelected) zi += 5000;
+                } else {
+                    if (isSelected) zi += 1000;
+                }
+                item.style.zIndex = zi;
                 item.style.visibility = lyr.props.visible ? '' : 'hidden';
 
                 const crop = document.createElement('div');
                 crop.className = 'lg-crop';
-                const img = document.createElement('img');
-                img.src = lyr.img; img.alt = lyr.name;
-                crop.appendChild(img);
+
+                if (lyr.type === 'text') {
+                    const txt = document.createElement('div');
+                    txt.className = 'lg-text-node';
+                    txt.textContent = lyr.text;
+                    txt.contentEditable = isTextMode && isSelected;
+                    txt.style.width = '100%';
+                    txt.style.height = '100%';
+                    txt.style.display = 'flex';
+                    txt.style.alignItems = 'center';
+                    txt.style.justifyContent = 'center';
+                    txt.style.fontSize = lyr.props.fontSize + 'px';
+                    txt.style.color = lyr.props.color;
+                    txt.style.fontWeight = lyr.props.bold ? 'bold' : 'normal';
+                    txt.style.fontStyle = lyr.props.italic ? 'italic' : 'normal';
+                    txt.style.fontFamily = lyr.props.fontFamily;
+                    txt.style.textAlign = lyr.props.textAlign;
+                    txt.style.lineHeight = lyr.props.lineHeight;
+                    txt.style.letterSpacing = lyr.props.letterSpacing + 'px';
+                    txt.style.wordBreak = 'break-word';
+                    txt.style.pointerEvents = isTextMode && isSelected ? 'all' : 'none';
+
+                    txt.oninput = () => {
+                        lyr.text = txt.textContent;
+                        lyr.name = txt.textContent.substring(0, 15) || 'Text';
+                        renderLayerList();
+                        document.getElementById('txtContent').value = lyr.text;
+                    };
+
+                    crop.appendChild(txt);
+                } else {
+                    const img = document.createElement('img');
+                    img.src = lyr.img; img.alt = lyr.name;
+                    img.style.pointerEvents = 'none';
+                    crop.appendChild(img);
+                }
+                crop.style.pointerEvents = 'none';
 
                 // Handle wrapper contains handles and ring, matches image transform
                 const hWrap = document.createElement('div');
@@ -3417,14 +4140,7 @@
                 ring.className = 'lg-ring';
                 hWrap.appendChild(ring);
 
-                const handles = ['tl', 'tc', 'tr', 'ml', 'mr', 'bl', 'bc', 'br'];
-                const rhEls = handles.map(pos => {
-                    const rh = document.createElement('div');
-                    rh.className = 'rh ' + pos;
-                    rh.dataset.pos = pos;
-                    hWrap.appendChild(rh);
-                    return rh;
-                });
+
 
                 const num = document.createElement('div');
                 num.className = 'lg-num';
@@ -3440,76 +4156,54 @@
                     const isTouch = e.type === 'touchstart';
                     if (isTouch) e.preventDefault();
 
-                    const clientX = isTouch ? e.touches[0].clientX : e.clientX;
-                    const clientY = isTouch ? e.touches[0].clientY : e.clientY;
+                    const item = e.target.closest('.lg-item');
+                    if (!item) return;
 
-                    // ── SMART LAYER SELECTION ──
-                    const gridRect = layerImgGrid.getBoundingClientRect();
-                    const clickPctX = (clientX - gridRect.left) / gridRect.width * 100;
-                    const clickPctY = (clientY - gridRect.top) / gridRect.height * 100;
+                    const uid = +item.dataset.uid;
+                    const lyr = layers.find(l => l.uid === uid);
+                    if (!lyr || !lyr.props.visible) return;
 
-                    function hitsLayer(l) {
-                        const p = l.props;
-                        return clickPctX >= p.offsetX && clickPctX <= p.offsetX + p.width &&
-                            clickPctY >= p.offsetY && clickPctY <= p.offsetY + p.height;
-                    }
-
-                    if (hitsLayer(lyr)) {
-                        if (activeUid !== lyr.uid) {
-                            activeUid = lyr.uid;
-                            layerImgGrid.querySelectorAll('.lg-item').forEach((el, idx) => {
-                                const sel = el.dataset.uid == lyr.uid;
-                                el.classList.toggle('selected', sel);
-                                el.style.zIndex = sel ? 500 : (idx + 1);
-                            });
-                            lvList.querySelectorAll('.lv-item').forEach(el => {
-                                el.classList.toggle('active', el.dataset && +el.dataset.uid === lyr.uid);
-                            });
-                            updateProps();
-                            switchTab('Props');
-                        }
+                    // Only allow dragging if it is ALREADY the active layer
+                    if (activeUid === uid) {
                         attachMoveDrag(e, lyr, item);
-                        return;
                     }
+                };
 
-                    let targetUid = null;
-                    for (let i = layers.length - 1; i >= 0; i--) {
-                        const other = layers[i];
-                        if (other.uid === lyr.uid) continue;
-                        if (!other.props.visible) continue;
-                        if (hitsLayer(other)) {
-                            targetUid = other.uid;
-                            break;
-                        }
-                    }
+                const onDblClick = e => {
+                    const item = e.target.closest('.lg-item');
+                    if (!item) return;
+                    const uid = +item.dataset.uid;
 
-                    if (targetUid !== null) {
-                        activeUid = targetUid;
-                        layerImgGrid.querySelectorAll('.lg-item').forEach((el, idx) => {
-                            const sel = +el.dataset.uid === targetUid;
-                            el.classList.toggle('selected', sel);
-                            el.style.zIndex = sel ? 500 : (idx + 1);
-                        });
-                        lvList.querySelectorAll('.lv-item').forEach(el => {
-                            el.classList.toggle('active', el.dataset && +el.dataset.uid === targetUid);
-                        });
-                        updateProps();
+                    if (activeUid !== uid) {
+                        selectLayer(uid);
                         switchTab('Props');
                     }
                 };
 
                 item.addEventListener('mousedown', onStart);
                 item.addEventListener('touchstart', onStart, { passive: false });
+                item.addEventListener('dblclick', onDblClick);
 
-                // Single click on item also switches to props tab
-                item.addEventListener('click', e => {
-                    if (e.target.classList.contains('rh')) return;
-                    switchTab('Props');
+                const zoomFitBtn = document.getElementById('zoomFit');
+                const zoomInBtn = document.getElementById('zoomIn');
+                const zoomOutBtn = document.getElementById('zoomOut');
+
+                // Zoom controls
+                zoomInBtn.onclick = () => updateZoom(10);
+                zoomOutBtn.onclick = () => updateZoom(-10);
+                zoomFitBtn.onclick = () => { _zoom = 90; applyZoom(); toast('Zoom fit'); };
+
+                // ── LAYER ROTATION HANDLE ──
+                const handles = ['tl', 'tc', 'tr', 'ml', 'mr', 'bl', 'bc', 'br', 'rot'];
+                const rhEls = handles.map(pos => {
+                    const rh = document.createElement('div');
+                    rh.className = 'rh ' + pos;
+                    rh.dataset.pos = pos;
+                    hWrap.appendChild(rh);
+                    if (pos === 'rot') attachRotateDrag(rh, lyr, item);
+                    else attachResizeDrag(rh, lyr, item);
+                    return rh;
                 });
-
-
-
-                rhEls.forEach(rh => attachResizeDrag(rh, lyr, item));
                 layerImgGrid.appendChild(item);
             });
         }
@@ -3563,6 +4257,58 @@
                 document.addEventListener('mousemove', onMove, { passive: true });
                 document.addEventListener('mouseup', onUp);
             }
+        }
+
+        function attachRotateDrag(handle, lyr, itemEl) {
+            const onStart = e => {
+                const isTouch = e.type === 'touchstart';
+                e.preventDefault();
+                e.stopPropagation();
+
+                const p = lyr.props;
+                const rect = itemEl.parentElement.getBoundingClientRect();
+
+                // Get current center of the item in viewport pixels
+                const centerX = rect.left + (p.offsetX + p.width / 2) / 100 * rect.width;
+                const centerY = rect.top + (p.offsetY + p.height / 2) / 100 * rect.height;
+
+                function onMove(me) {
+                    const clientX = isTouch ? me.touches[0].clientX : me.clientX;
+                    const clientY = isTouch ? me.touches[0].clientY : me.clientY;
+
+                    // Simple trig for angle relative to center
+                    const angle = Math.atan2(clientY - centerY, clientX - centerX);
+                    let deg = angle * (180 / Math.PI) + 90; // +90 because handle is at the top
+
+                    // Snapping (Shift key or auto-snap at 15deg)
+                    if (me.shiftKey) deg = Math.round(deg / 15) * 15;
+
+                    if (_raf) cancelAnimationFrame(_raf);
+                    _raf = requestAnimationFrame(() => {
+                        p.rotate = Math.round(deg);
+                        applyTransform(itemEl, p);
+                        if (lyr.uid === activeUid) {
+                            document.getElementById('valRotate').textContent = p.rotate + '°';
+                            document.getElementById('slRotate').value = p.rotate;
+                        }
+                    });
+                }
+                function onUp() {
+                    cancelAnimationFrame(_raf);
+                    document.removeEventListener('mousemove', onMove);
+                    document.removeEventListener('mouseup', onUp);
+                    document.removeEventListener('touchmove', onMove);
+                    document.removeEventListener('touchend', onUp);
+                    renderLayerList();
+                }
+                if (isTouch) {
+                    document.addEventListener('touchmove', onMove, { passive: false });
+                    document.addEventListener('touchend', onUp);
+                } else {
+                    document.addEventListener('mousemove', onMove);
+                    document.addEventListener('mouseup', onUp);
+                }
+            };
         }
 
         function attachResizeDrag(handle, lyr, itemEl) {
@@ -3820,9 +4566,12 @@
         document.getElementById('panelTog').addEventListener('click', () => rpanel.classList.contains('open') ? (rpanel.classList.remove('open'), pov.classList.remove('show')) : (rpanel.classList.add('open'), pov.classList.add('show')));
         pov.addEventListener('click', () => { rpanel.classList.remove('open'); pov.classList.remove('show'); });
 
-        function toast(msg) {
-            const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('on');
-            clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('on'), 2600);
+        function toast(msg, type = 'info') {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.className = 'on ' + type;
+            clearTimeout(t._t);
+            t._t = setTimeout(() => t.classList.remove('on'), 3500);
         }
 
         setTimeout(() => { document.getElementById('loader').classList.add('gone'); setTimeout(openSize, 450); }, 2200);
@@ -4112,18 +4861,362 @@
             handleFileUpload(e.target.files[0]);
             fileInp.value = '';
         };
+
+        // ── ZOOM SYSTEM ──
+        let _zoom = 100;
+        const layerWrapEl = document.getElementById('layerWrap');
+        const zoomValEl = document.getElementById('zoomVal');
+        const zoomInBtn = document.getElementById('zoomIn');
+        const zoomOutBtn = document.getElementById('zoomOut');
+        const zoomFitBtn = document.getElementById('zoomFit');
+
+        function updateZoom(delta) {
+            _zoom = Math.min(400, Math.max(10, _zoom + delta));
+            applyZoom();
+        }
+
+        function applyZoom() {
+            layerWrapEl.style.transform = `translate(-50%, -50%) scale(${_zoom / 100})`;
+            zoomValEl.textContent = Math.round(_zoom) + '%';
+        }
+
+        zoomInBtn.onclick = () => updateZoom(10);
+        zoomOutBtn.onclick = () => updateZoom(-10);
+        zoomFitBtn.onclick = () => {
+            const canvasRect = canvas.getBoundingClientRect();
+            const layerRect = document.getElementById('cLayer').getBoundingClientRect();
+            // Simple fit logic: reset to 90% if it was too big or small
+            _zoom = 90;
+            applyZoom();
+            toast('Zoom fit');
+        };
+
+        const canvasRotateBtn = document.getElementById('canvasRotate');
+        canvasRotateBtn.onclick = () => {
+            const cl = document.getElementById('cLayer');
+            const oldCW = cl.offsetWidth;
+            const oldCH = cl.offsetHeight;
+
+            // Swap Workspace Dimensions
+            cl.style.width = oldCH + 'px';
+            cl.style.height = oldCW + 'px';
+
+            // Transform layers to 90 deg clockwise position, but KEEP content upright
+            layers.forEach(l => {
+                const p = l.props;
+                // Convert current % to pixels relative to old size
+                const wPx = (p.width * oldCW) / 100;
+                const hPx = (p.height * oldCH) / 100;
+                const xPx = (p.offsetX * oldCW) / 100;
+                const yPx = (p.offsetY * oldCH) / 100;
+
+                // 90 deg CW coordinate rotation
+                const newXPx = oldCH - (yPx + hPx);
+                const newYPx = xPx;
+                const newWPx = hPx;
+                const newHPx = wPx;
+
+                // Convert back to % relative to the NEW size (which is oldCH x oldCW)
+                p.width = (newWPx / oldCH) * 100;
+                p.height = (newHPx / oldCW) * 100;
+                p.offsetX = (newXPx / oldCH) * 100;
+                p.offsetY = (newYPx / oldCW) * 100;
+
+                // "not rotate inside image" -> p.rotate is untouched
+            });
+
+            refreshGrid();
+            renderLayerList();
+            updateProps();
+            toast('Workspace rotated 90° 🔄', 'success');
+        };
+
+        // Wheel to zoom
+        canvas.addEventListener('wheel', e => {
+            if (e.ctrlKey) {
+                e.preventDefault();
+                updateZoom(e.deltaY < 0 ? 5 : -5);
+            }
+        }, { passive: false });
+
+        // ── DESELECT ON BACKGROUND CLICK ──
+        canvas.addEventListener('mousedown', e => {
+            // If the target is the canvas background or the layer grid (not an item)
+            if (e.target === canvas || e.target === layerImgGrid) {
+                if (isTextMode) {
+                    // Create new text at click spot
+                    const rect = layerImgGrid.getBoundingClientRect();
+                    const x = (e.clientX - rect.left) / rect.width * 100;
+                    const y = (e.clientY - rect.top) / rect.height * 100;
+
+                    const newLyr = mkLayer({
+                        type: 'text',
+                        text: 'Type something...'
+                    });
+                    newLyr.props.offsetX = x - 25; // center roughly
+                    newLyr.props.offsetY = y - 10;
+                    newLyr.props.width = 50;
+                    newLyr.props.height = 20;
+
+                    layers.push(newLyr);
+                    activeUid = newLyr.uid;
+                    refreshGrid();
+                    renderLayerList();
+                    updateProps();
+
+                    // Focus the new text node
+                    setTimeout(() => {
+                        const node = layerImgGrid.querySelector(`[data-uid="${newLyr.uid}"] .lg-text-node`);
+                        if (node) {
+                            node.focus();
+                            // Select all text
+                            const selection = window.getSelection();
+                            const range = document.createRange();
+                            range.selectNodeContents(node);
+                            selection.removeAllRanges();
+                            selection.addRange(range);
+                        }
+                    }, 50);
+
+                    toast('New text created at spot! 🖋️');
+                } else {
+                    activeUid = null;
+                    refreshGrid();
+                    renderLayerList();
+                    updateProps();
+                }
+            }
+        });
+
+        // ── PROJECT IMPORT / EXPORT ──
+        document.getElementById('btnExport').onclick = () => {
+            if (layers.length === 0) return toast('No layers to export!', 'error');
+            const project = {
+                layers: layers,
+                canvas: {
+                    width: document.getElementById('cLayer').offsetWidth,
+                    height: document.getElementById('cLayer').offsetHeight
+                },
+                version: '1.0'
+            };
+            const blob = new Blob([JSON.stringify(project)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'design-project-' + Date.now() + '.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            toast('Project exported successfully 💾', 'success');
+        };
+
+        const importInp = document.getElementById('importInp');
+        document.getElementById('btnImport').onclick = () => importInp.click();
+
+        importInp.onchange = e => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                try {
+                    const project = JSON.parse(event.target.result);
+                    if (project.layers && project.canvas) {
+                        layers = project.layers;
+                        buildLayer(project.canvas.width, project.canvas.height);
+                        refreshGrid();
+                        renderLayerList();
+                        toast('Project imported! 📁', 'success');
+                    } else {
+                        throw new Error('Invalid project file');
+                    }
+                } catch (err) {
+                    toast('Failed to import project', 'error');
+                }
+            };
+            reader.readAsText(file);
+            importInp.value = '';
+        };
+
+        // ── NEW TOOLS ACTIONS ──
+        document.getElementById('btnFitScreen').onclick = () => {
+            const l = getActive(); if (!l) return;
+            l.props.width = 100; l.props.height = 100;
+            l.props.offsetX = 0; l.props.offsetY = 0;
+            updateProps(); refreshGrid(); toast('Layer fitted to screen ✨', 'success');
+        };
+
+        document.getElementById('txtContent').oninput = function () {
+            const l = getActive(); if (!l) return;
+            l.text = this.value;
+            l.name = this.value.substring(0, 15) || 'Text';
+            const item = layerImgGrid.querySelector(`[data-uid="${l.uid}"]`);
+            if (item) {
+                const node = item.querySelector('.lg-text-node');
+                if (node) node.textContent = l.text;
+            }
+            renderLayerList();
+        };
+
+        document.getElementById('txtSize').oninput = function () {
+            const l = getActive(); if (!l) return;
+            l.props.fontSize = +this.value;
+            document.getElementById('valTxtSize').textContent = this.value + 'px';
+            const item = layerImgGrid.querySelector(`[data-uid="${l.uid}"]`);
+            if (item) {
+                const node = item.querySelector('.lg-text-node');
+                if (node) node.style.fontSize = this.value + 'px';
+            }
+        };
+
+        document.getElementById('txtColor').oninput = function () {
+            const l = getActive(); if (!l) return;
+            l.props.color = this.value;
+            const item = layerImgGrid.querySelector(`[data-uid="${l.uid}"]`);
+            if (item) {
+                const node = item.querySelector('.lg-text-node');
+                if (node) node.style.color = this.value;
+            }
+        };
+
+        document.getElementById('btnBold').onclick = function () {
+            const l = getActive(); if (!l) return;
+            l.props.bold = !l.props.bold;
+            this.classList.toggle('on', l.props.bold);
+            const item = layerImgGrid.querySelector(`[data-uid="${l.uid}"]`);
+            if (item) {
+                const node = item.querySelector('.lg-text-node');
+                if (node) node.style.fontWeight = l.props.bold ? 'bold' : 'normal';
+            }
+        };
+
+        document.getElementById('btnItalic').onclick = function () {
+            const l = getActive(); if (!l) return;
+            l.props.italic = !l.props.italic;
+            this.classList.toggle('on', l.props.italic);
+            const item = layerImgGrid.querySelector(`[data-uid="${l.uid}"]`);
+            if (item) {
+                const node = item.querySelector('.lg-text-node');
+                if (node) node.style.fontStyle = l.props.italic ? 'italic' : 'normal';
+            }
+        };
+
+        document.getElementById('txtFont').onchange = function () {
+            const l = getActive(); if (!l) return;
+            l.props.fontFamily = this.value;
+            const item = layerImgGrid.querySelector(`[data-uid="${l.uid}"]`);
+            if (item) {
+                const node = item.querySelector('.lg-text-node');
+                if (node) node.style.fontFamily = this.value;
+            }
+        };
+
+        ['L', 'C', 'R'].forEach(dir => {
+            document.getElementById('btnAlign' + dir).onclick = function () {
+                const l = getActive(); if (!l) return;
+                const tag = dir === 'L' ? 'left' : dir === 'C' ? 'center' : 'right';
+                l.props.textAlign = tag;
+                updateProps();
+                const item = layerImgGrid.querySelector(`[data-uid="${l.uid}"]`);
+                if (item) {
+                    const node = item.querySelector('.lg-text-node');
+                    if (node) node.style.textAlign = tag;
+                }
+            };
+        });
+
+        document.getElementById('txtHeight').oninput = function () {
+            const l = getActive(); if (!l) return;
+            l.props.lineHeight = +this.value;
+            document.getElementById('valTxtHeight').textContent = this.value;
+            const item = layerImgGrid.querySelector(`[data-uid="${l.uid}"]`);
+            if (item) {
+                const node = item.querySelector('.lg-text-node');
+                if (node) node.style.lineHeight = this.value;
+            }
+        };
+
+        document.getElementById('txtSpacing').oninput = function () {
+            const l = getActive(); if (!l) return;
+            l.props.letterSpacing = +this.value;
+            document.getElementById('valTxtSpacing').textContent = this.value + 'px';
+            const item = layerImgGrid.querySelector(`[data-uid="${l.uid}"]`);
+            if (item) {
+                const node = item.querySelector('.lg-text-node');
+                if (node) node.style.letterSpacing = this.value + 'px';
+            }
+        };
+
+        // ── VOICE TO TEXT ──
+        let recognition = null;
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+
+            recognition.onstart = () => {
+                const btn = document.getElementById('btnVoice');
+                if (btn) {
+                    btn.style.background = '#ff4b2b';
+                    btn.style.boxShadow = '0 0 10px rgba(255, 75, 43, 0.5)';
+                }
+                toast('Listening... 🎙️');
+            };
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                const txtArea = document.getElementById('txtContent');
+                const start = txtArea.selectionStart;
+                const end = txtArea.selectionEnd;
+                const currentText = txtArea.value;
+
+                // Insert transcript at cursor
+                const newText = currentText.substring(0, start) + transcript + currentText.substring(end);
+                txtArea.value = newText;
+                txtArea.dispatchEvent(new Event('input'));
+                toast('Transcribed! ✨');
+            };
+
+            recognition.onend = () => {
+                const btn = document.getElementById('btnVoice');
+                if (btn) {
+                    btn.style.background = 'var(--blue)';
+                    btn.style.boxShadow = 'none';
+                }
+            };
+
+            recognition.onerror = (event) => {
+                toast('Voice error: ' + event.error, 'error');
+            };
+        }
+
+        document.getElementById('btnVoice').onclick = () => {
+            if (!recognition) return toast('Voice recognition not supported in this browser', 'error');
+            recognition.lang = document.getElementById('voiceLang').value;
+            recognition.start();
+        };
+
+        document.getElementById('sbText').onclick = () => {
+            isTextMode = !isTextMode;
+            document.body.classList.toggle('text-mode-active', isTextMode);
+            document.getElementById('sbText').classList.toggle('active', isTextMode);
+
+            if (isTextMode) {
+                toast('Text Mode Active: Click anywhere to type! ⌨️', 'success');
+            } else {
+                toast('Selection Mode Active 🖱️');
+            }
+        };
     </script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
-        // ── DOWNLOAD ──
-        document.getElementById('dlBtn').addEventListener('click', () => {
+        // ── DOWNLOAD / EXPORT IMAGE ──
+        const onDownload = () => {
             const cLayer = document.getElementById('cLayer');
             if (!cLayer || !document.getElementById('layerWrap').classList.contains('vis')) {
-                toast('Nothing to download yet');
-                return;
+                return toast('Nothing to export yet', 'error');
             }
-            toast('Preparing download\u2026');
+            toast('Preparing image export\u2026', 'info');
             const selItems = document.querySelectorAll('.lg-item.selected');
             selItems.forEach(el => el.classList.remove('selected'));
             html2canvas(cLayer, {
@@ -4138,12 +5231,15 @@
                 link.download = 'design-' + Date.now() + '.png';
                 link.href = canvas.toDataURL('image/png');
                 link.click();
-                toast('Downloaded!');
+                toast('Image exported! ✨', 'success');
             }).catch(() => {
                 selItems.forEach(el => el.classList.add('selected'));
-                toast('Download failed. Try again.');
+                toast('Export failed', 'error');
             });
-        });
+        };
+
+        document.getElementById('dlBtn').addEventListener('click', onDownload);
+        if (document.getElementById('sbDlBtn')) document.getElementById('sbDlBtn').addEventListener('click', onDownload);
     </script>
 </body>
 
